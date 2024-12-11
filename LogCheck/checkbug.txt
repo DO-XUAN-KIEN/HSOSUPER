@@ -1,0 +1,7 @@
+Start Check 
+-----------------------------
+
+vo ne
+0 Map[]Null
+0 MapNull
+0 PlayerNull
