@@ -32,14 +32,6 @@ public class MobNoel {
         this.index = idx;
         x= (short)(Util.random(map.mapW)*24);
         y= (short)(Util.random(map.mapH)*24);
-//        for(Player p:map.players){
-//            if(p!=null && p.conn!= null && p.conn.connected && Math.abs(x - p.x) < 300 && Math.abs(y - p.y) < 300)
-//            {
-//                try{
-//                    //SendMob(p.conn);
-//                }catch(Exception e){}
-//            }
-//        }
         map.mobnoel.add(this);
     }
 
@@ -74,26 +66,6 @@ public class MobNoel {
         conn.addmsg(m);
         m.cleanup();
 
-    }
-
-    public void SendEffMob(Session conn)throws IOException{
-        if(!conn.p.isShowMobEvents)return;
-        Message m = new Message(-49);
-        m.writer().writeByte(0);
-        m.writer().writeShort(Manager.gI().msg_eff_109.length);
-        m.writer().write(Manager.gI().msg_eff_109);
-
-        m.writer().writeByte(0);
-        m.writer().writeByte(1);
-        m.writer().writeByte(109);
-
-        m.writer().writeShort(index);
-        m.writer().writeByte(1);//tem mob
-        m.writer().writeByte(0);
-        m.writer().writeShort(8000);
-        m.writer().writeByte(0);
-        conn.addmsg(m);
-        m.cleanup();
     }
 
     public void MobLeave()throws IOException{
@@ -138,34 +110,6 @@ public class MobNoel {
             m2.cleanup();
         }catch(Exception e){}
     }
-
-    public void updateMobInsiders(){
-        try{
-            Message m = new Message(7);
-            m.writer().writeShort(index);
-            m.writer().writeByte(40);
-            m.writer().writeShort(x);
-            m.writer().writeShort(y);
-            m.writer().writeInt(1);
-            m.writer().writeInt(1);
-            m.writer().writeByte(0);
-            m.writer().writeInt(1);
-            m.writer().writeShort(-1);
-
-            m.writer().writeByte(1);
-            m.writer().writeByte(1);
-            m.writer().writeByte(0);
-            m.writer().writeUTF(nameOwner);
-            m.writer().writeLong(-11111);
-            m.writer().writeByte(0);
-            for(Player p : map.players){
-                if(p!=null && p.conn!= null && p.conn.connected && Math.abs(x - p.x) < 300 && Math.abs(y - p.y) < 300)
-                    p.conn.addmsg(m);
-            }
-            m.cleanup();
-        }catch(IOException e){}
-    }
-
     public void update(){
         try{
             long time = System.currentTimeMillis();

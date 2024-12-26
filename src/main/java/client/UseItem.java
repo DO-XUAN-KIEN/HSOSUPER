@@ -233,6 +233,102 @@ public class UseItem {
                 Quask.Menu_noel(conn, (byte) 2);
                 break;
             }
+            case 365: {// x3
+                EffTemplate ef2 = conn.p.get_EffDefault(-125);
+                EffTemplate ef3 = conn.p.get_EffDefault(-222);
+                EffTemplate ef4 = conn.p.get_EffDefault(-223);
+                EffTemplate ef5 = conn.p.get_EffDefault(-224);
+                EffTemplate ef10 = conn.p.get_EffDefault(-225);
+                if (ef2 != null || ef4 != null || ef5 != null || ef10 != null){
+                    Service.send_notice_box(conn,"Bạn đang sử dụng các sách exp khác");
+                    return;
+                }
+                conn.p.item.remove(4, id_potion, 1);
+                EffTemplate ef = conn.p.get_EffDefault(-222);
+                if (ef != null) {
+                    long time_extra = (ef.time - System.currentTimeMillis()) + (1000 * 60 * 120 - 1);
+                    if (time_extra > (1000 * 60 * 60 * 24 * 3 - 1)) {
+                        time_extra = 1000 * 60 * 60 * 24 * 3 - 1;
+                    }
+                    conn.p.add_EffDefault(-222, 7500, (int) time_extra);
+                } else {
+                    conn.p.add_EffDefault(-222, 7500, (1000 * 60 * 120 - 1));
+                }
+                conn.p.set_x2_xp(2);
+                break;
+            }
+            case 366: {// x4
+                EffTemplate ef2 = conn.p.get_EffDefault(-125);
+                EffTemplate ef3 = conn.p.get_EffDefault(-222);
+                EffTemplate ef4 = conn.p.get_EffDefault(-223);
+                EffTemplate ef5 = conn.p.get_EffDefault(-224);
+                EffTemplate ef10 = conn.p.get_EffDefault(-225);
+                if (ef2 != null || ef3 != null || ef5 != null || ef10 != null){
+                    Service.send_notice_box(conn,"Bạn đang sử dụng các sách exp khác");
+                    return;
+                }
+                conn.p.item.remove(4, id_potion, 1);
+                EffTemplate ef = conn.p.get_EffDefault(-223);
+                if (ef != null) {
+                    long time_extra = (ef.time - System.currentTimeMillis()) + (1000 * 60 * 120 - 1);
+                    if (time_extra > (1000 * 60 * 60 * 24 * 3 - 1)) {
+                        time_extra = 1000 * 60 * 60 * 24 * 3 - 1;
+                    }
+                    conn.p.add_EffDefault(-223, 10000, (int) time_extra);
+                } else {
+                    conn.p.add_EffDefault(-223, 10000, (1000 * 60 * 120 - 1));
+                }
+                conn.p.set_x2_xp(3);
+                break;
+            }
+            case 367: {// x5
+                EffTemplate ef2 = conn.p.get_EffDefault(-125);
+                EffTemplate ef3 = conn.p.get_EffDefault(-222);
+                EffTemplate ef4 = conn.p.get_EffDefault(-223);
+                EffTemplate ef5 = conn.p.get_EffDefault(-224);
+                EffTemplate ef10 = conn.p.get_EffDefault(-225);
+                if (ef2 != null || ef3 != null || ef4 != null || ef10 != null){
+                    Service.send_notice_box(conn,"Bạn đang sử dụng các sách exp khác");
+                    return;
+                }
+                conn.p.item.remove(4, id_potion, 1);
+                EffTemplate ef = conn.p.get_EffDefault(-223);
+                if (ef != null) {
+                    long time_extra = (ef.time - System.currentTimeMillis()) + (1000 * 60 * 120 - 1);
+                    if (time_extra > (1000 * 60 * 60 * 24 * 3 - 1)) {
+                        time_extra = 1000 * 60 * 60 * 24 * 3 - 1;
+                    }
+                    conn.p.add_EffDefault(-223, 12500, (int) time_extra);
+                } else {
+                    conn.p.add_EffDefault(-223, 12500, (1000 * 60 * 120 - 1));
+                }
+                conn.p.set_x2_xp(4);
+                break;
+            }
+            case 368: {// x10
+                EffTemplate ef2 = conn.p.get_EffDefault(-125);
+                EffTemplate ef3 = conn.p.get_EffDefault(-222);
+                EffTemplate ef4 = conn.p.get_EffDefault(-223);
+                EffTemplate ef5 = conn.p.get_EffDefault(-224);
+                EffTemplate ef10 = conn.p.get_EffDefault(-225);
+                if (ef2 != null || ef3 != null || ef4 != null || ef5 != null){
+                    Service.send_notice_box(conn,"Bạn đang sử dụng các sách exp khác");
+                    return;
+                }
+                conn.p.item.remove(4, id_potion, 1);
+                EffTemplate ef = conn.p.get_EffDefault(-223);
+                if (ef != null) {
+                    long time_extra = (ef.time - System.currentTimeMillis()) + (1000 * 60 * 120 - 1);
+                    if (time_extra > (1000 * 60 * 60 * 24 * 3 - 1)) {
+                        time_extra = 1000 * 60 * 60 * 24 * 3 - 1;
+                    }
+                    conn.p.add_EffDefault(-223, 25000, (int) time_extra);
+                } else {
+                    conn.p.add_EffDefault(-223, 25000, (1000 * 60 * 120 - 1));
+                }
+                conn.p.set_x2_xp(5);
+                break;
+            }
             case 84: {
                 if (conn.p.map.zone_id != conn.p.map.maxzone) {
                     Service.send_notice_box(conn, "Chỉ dùng được trong khu đi buôn");
@@ -858,7 +954,6 @@ public class UseItem {
                 ItemTemplate7 item2 = ItemTemplate7.item.get((50 > Util.random(0, 100)) ? 0 : 3);
                 int quant1_ = Util.random(1, 2);
                 int quant2_ = Util.random(1, 6);
-                int quant3_ = Util.random(30000, 50000);
                 //
                 Message m = new Message(78);
                 m.writer().writeUTF("Rương boss phe");
@@ -875,13 +970,6 @@ public class UseItem {
                 m.writer().writeShort(item2.getIcon()); // icon
                 m.writer().writeInt(quant2_); // quantity
                 m.writer().writeByte(7); // type in bag
-                m.writer().writeByte(0); // tier
-                m.writer().writeByte(0); // color
-                //
-                m.writer().writeUTF(""); // name
-                m.writer().writeShort(0); // icon
-                m.writer().writeInt(quant3_); // quantity
-                m.writer().writeByte(4); // type in bag
                 m.writer().writeByte(0); // tier
                 m.writer().writeByte(0); // color
 //                }
@@ -903,8 +991,6 @@ public class UseItem {
                 itbag2.category = 7;
                 conn.p.item.add_item_bag47(7, itbag2);
                 //
-                conn.p.update_vang(quant3_);
-                Log.gI().add_log(conn.p.name, "Nhận " + quant3_ + " từ rương boss phe");
                 //
                 conn.p.item.char_inventory(7);
                 conn.p.item.remove(4, id_potion, 1);
@@ -972,7 +1058,7 @@ public class UseItem {
                 if(!conn.p.isOwner){
                     return;
                 }
-                if (conn.p.level < 10 || conn.p.level == 20 || conn.p.level == 30 || conn.p.level == 40) {
+                if (conn.p.level < 10 || conn.p.level == 20 || conn.p.level == 30 || conn.p.level == 40 || conn.p.level > 140) {
                     Service.send_notice_nobox_white(conn, "level không phù hợp");
                     return;
                 }
@@ -1044,6 +1130,25 @@ public class UseItem {
                     itbag.time_use = 0;
                     conn.p.item.add_item_bag3(itbag);
                 } else {
+                    Service.send_notice_nobox_white(conn, "Đã có trong hành trang!");
+                }
+                break;
+            }
+            case 369, 370, 371, 372, 373, 374, 375: {
+                short id_wing_recei = (short) (id_potion + 4363);
+                boolean check = true;
+                for (int i = 0; i < conn.p.item.bag3.length; i++) {
+                    if (conn.p.item.bag3[i] != null && conn.p.item.bag3[i].id == id_wing_recei) {
+                        check = false;
+                        break;
+                    }
+                }
+                if (conn.p.item.wear[13] != null && conn.p.item.wear[13].id == id_wing_recei) {
+                    check = false;
+                }
+                if (check) {
+                    conn.p.item.add_item_bag3_default(id_wing_recei, 0, true);
+                }else {
                     Service.send_notice_nobox_white(conn, "Đã có trong hành trang!");
                 }
                 break;

@@ -16,10 +16,10 @@ import template.Option;
 public class Kham_Item {
 
     public static boolean CheckNgocTinhLuyen(short id) {
-        if ((id >= 382 && id <= 386) || (id >= 387 && id <= 391) ||(id >= 392 && id <= 396) 
-                || (id >= 397 && id <= 401) || (id >= 402 && id <= 406) 
-                ||(id >= 407 && id <= 411) || (id >= 412 && id <= 416)
-                || (id >= 23 && id <= 32) || id == 496 || id == 497 || id == 498)
+        if ((id >= 384 && id <= 386) || (id >= 389 && id <= 391) ||(id >= 394 && id <= 396)
+                || (id >= 399 && id <= 401) || (id >= 404 && id <= 406)
+                ||(id >= 409 && id <= 411) || (id >= 414 && id <= 416)
+                || (id >= 25 && id <= 32) || id == 496 || id == 497 || id == 498)
             return true;
         return false;
     }

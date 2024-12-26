@@ -11,6 +11,7 @@ import core.*;
 
 import static core.Service.send_notice_nobox_white;
 
+import ev_he.*;
 import event_daily.MoLy;
 import event_daily.ChienTruong;
 import io.Message;
@@ -22,6 +23,7 @@ import template.Horse;
 public class MessageHandler {
 
     private final Session conn;
+    private  Map map;
 
     public MessageHandler(Session conn) {
         this.conn = conn;
@@ -64,6 +66,8 @@ public class MessageHandler {
                     DoSieucap.nangmdthan(conn,m);
                 } else if (conn.p.istb2) {
                     DoSieucap.nangtb2(conn,m);
+                } else if (conn.p.istb1) {
+                    DoSieucap.nangtb1(conn,m);
                 } else {
                     GameSrc.Create_Medal(conn, m);
                 }
@@ -485,12 +489,24 @@ public class MessageHandler {
                 if (b != 0) {
                     break;
                 }
-                if (Manager.gI().event == 8) {
-                    short id = (short) (m.reader().readShort() - 1000);
-                    MenuController.send_menu_select(conn, id, new String[]{"Nhận quà"}, (byte) Manager.gI().event);
-                }else {
-                    short id = (short) (m.reader().readShort() - 1000);
-                    MenuController.send_menu_select(conn, id, new String[]{"Hái quả"}, (byte) Manager.gI().event);
+                short id = (short) (m.reader().readShort() - 1000);
+                Mobngoc.Mob_Ngoc mobngoc = Mobngoc.getMob(id);
+                Mobtb2.Mob_tb2 mobTb2 = Mobtb2.getMob(id);
+                Mobkhu2.Mob_khu2 mobKhu2 = Mobkhu2.getMob(id);
+                try {
+                    if (mobngoc != null) {
+                        MenuController.send_menu_select(conn, id, new String[]{"Nhận ngọc"}, (byte) 113);
+                    } else if (mobTb2 != null) {
+                        MenuController.send_menu_select(conn, id, new String[]{"Ngươi chọn ta ư"}, (byte) 112);
+                    } else if (mobKhu2 != null) {
+                        MenuController.send_menu_select(conn, id, new String[]{"Ăn xin"}, (byte) 111);
+                    } else if (Manager.gI().event == 8) {
+                        MenuController.send_menu_select(conn, id, new String[]{"Nhận quà"}, (byte) Manager.gI().event);
+                    } else {
+                        MenuController.send_menu_select(conn, id, new String[]{"Hái quả"}, (byte) Manager.gI().event);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
                 break;
             }
@@ -550,13 +566,23 @@ public class MessageHandler {
         Service.send_msg_data(conn, 1, Manager.gI().msg_1);
         Service.send_skill(conn.p);
         Service.send_login_rms(conn);
-        Service.send_notice_nobox_yellow(conn, ("Chào Mừng Bạn Đến Với Hiệp Sĩ Mango !! ")); //Số người online : " + (Session.client_entrys.size() + 30)));
+        Service.send_notice_nobox_yellow(conn, ("Chào Mừng Bạn Đến Với HSO SUPER !! ")); //Số người online : " + (Session.client_entrys.size() + 30)));
 //        send_notice_nobox_white(conn, ("Đổi Coin Sang Vàng Ngọc Tại Npc Zuru - Nạp Coin Tại hsomeobeo.pro  "));
 //        send_notice_nobox_white(conn, ("Số người online : " + (Session.client_entrys.size())));
         send_notice_nobox_white(conn, ("Bang " +  Manager.nameClanThue  + " Đang Sở Hữu  Quyền Thu Thuế Trên Toàn Sever " + " Thuế " + Manager.thue + " % "));
         Service.send_notice_nobox_yellow(conn, ("Bang " + Manager.nameClanThue + " - Đang Là Bang Hùng Mạnh Nhất Thế Giới Hiệp Sĩ"));
         // add x2 xp
-        conn.p.set_x2_xp(1);
+        if (conn.p.get_EffDefault(-125) != null) {
+            conn.p.set_x2_xp(1);
+        }else if (conn.p.get_EffDefault(-222) != null) {
+            conn.p.set_x2_xp(2);
+        }else if (conn.p.get_EffDefault(-223) != null) {
+            conn.p.set_x2_xp(3);
+        }else if (conn.p.get_EffDefault(-224) != null) {
+            conn.p.set_x2_xp(4);
+        }else if (conn.p.get_EffDefault(-225) != null) {
+            conn.p.set_x2_xp(5);
+        }
         conn.p.dokho = 0;
         if(conn.p.get_EffDefault(-129) != null) {
             EffTemplate eff = conn.p.get_EffDefault(-129);

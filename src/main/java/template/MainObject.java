@@ -12,6 +12,7 @@ import core.Service;
 import core.Util;
 import event_daily.ChiemThanhManager;
 import event_daily.ChienTruong;
+import event_daily.MapKiemMoney;
 import io.Message;
 
 import java.io.IOException;
@@ -65,44 +66,6 @@ public class MainObject {
     protected List<EffTemplate> Eff_me_kham;
     protected List<EffTemplate> Eff_Tinh_Tu;
     protected List<EffTemplate> Eff_Off_line;
-    public void update_timeoff(){
-        if (Eff_Off_line != null) {
-            synchronized (Eff_Off_line) {
-                long elapsedTime = 0;
-                System.out.println(offlineTime);
-                // Tính thời gian người chơi đã offline
-                if (isPlayer() && offlineTime > 0) {
-                    elapsedTime = System.currentTimeMillis() - offlineTime;
-                    offlineTime = 0; // Reset lại thời gian offline sau khi đã áp dụng
-                }
-                for (int i = Eff_Off_line.size() - 1; i >= 0; i--) {
-                    EffTemplate temp = Eff_Off_line.get(i);
-
-                    // Trừ thời gian offline vào thời gian còn lại của hiệu ứng
-                    if (elapsedTime > 0) {
-                        temp.time -= elapsedTime;
-                    }
-
-                    // Nếu là hiệu ứng nhận EXP offline (ID 101)
-                    if (temp.id == 101 && isPlayer() && elapsedTime > 0) {
-                        // Tính EXP nhận được
-                        long timeOfflineMinutes = elapsedTime / 60000; // Chuyển ms -> phút
-                        expGained = (int) (timeOfflineMinutes * temp.param); // param1 = tốc độ EXP/phút
-                        // Thưởng EXP cho người chơi
-                        ((Player) this).addExp(expGained);
-                        System.out.println("Bạn nhận được " + expGained + " EXP sau khi offline!");
-                        // Nếu hiệu ứng đã hết thời gian, loại bỏ nó
-                        if (temp.time <= System.currentTimeMillis()) {
-                            Eff_Off_line.remove(i);
-                        }
-                    } else if (temp.time <= System.currentTimeMillis()) {
-                        // Loại bỏ các hiệu ứng khác nếu đã hết thời gian
-                        Eff_Off_line.remove(i);
-                    }
-                }
-            }
-        }
-    }
 
     public void updateEff() {
         try {
@@ -113,7 +76,7 @@ public class MainObject {
                         if (temp.time <= System.currentTimeMillis()) {
                             MainEff.remove(i);
                             if (isPlayer()) {
-                                if (temp.id == -125) {
+                                if (temp.id == -125 || temp.id == -222 || temp.id == -223 || temp.id == -224 || temp.id == -225) {
                                     ((Player) this).set_x2_xp(0);
                                 }
                                 if (temp.id == 24 || temp.id == 23 || temp.id == 0 || temp.id == 2 || temp.id == 3
@@ -184,25 +147,6 @@ public class MainObject {
         if (this.fixedOfflineTime == 0) {                  // Chỉ gắn giá trị khi nó chưa được gán
             this.fixedOfflineTime = this.offlineTime;
         }
-    }
-    public void resetOfflineTime() {
-        this.offlineTime = 0; // Reset thời gian offline
-    }
-    public void add_EffOffline(int id, int param1, long time_end) {
-        if (Eff_Off_line == null) {
-            return;
-        }
-        synchronized (Eff_Off_line) {
-            Eff_Off_line.add(new EffTemplate(id, param1, time_end));
-        }
-    }
-    public void addOfflineExpEffect(long durationMillis, int expRatePerMinute) {
-        long timeEnd = System.currentTimeMillis() + durationMillis;
-        add_EffOffline(101, expRatePerMinute, timeEnd);
-    }
-    public void addExp(int exp) {
-        this.exp += exp; // Cộng thêm EXP vào EXP hiện tại của người chơi
-        System.out.println("EXP hiện tại: " + this.exp);
     }
     public void add_EffDefault(int id, int param1, long time_end) {
         if (MainEff == null) {
@@ -544,6 +488,10 @@ public class MainObject {
 //            send_eff_to_object(p, focus, 56);
 //        }
             EffTemplate ef;
+            EffTemplate ef3;
+            EffTemplate ef4;
+            EffTemplate ef5;
+            EffTemplate ef10;
             long dame = ObjAtk.get_DameBase();
             int hutHP = 0;
             float ptCrit = 0;
@@ -935,6 +883,9 @@ public class MainObject {
             if(ObjAtk.isPlayer() && focus.isMob() && (focus.template.mob_id == 23 || (focus.template.mob_id >= 51 && focus.template.mob_id <= 53)  || focus.template.mob_id == 79) && dame > 222222){
                 dame = 222222;
             }
+            if(ObjAtk.isPlayer() && focus.isMob() && focus.template.mob_id == 133 && dame > 10000){
+                dame = 10000;
+            }
             if (focus.get_EffDefault(StrucEff.GoiSet) != null){
                 dame *= 0.7;
             }
@@ -1285,6 +1236,9 @@ public class MainObject {
                     if (map.isMapChienTruong()) {
                         ChienTruong.Obj_Die(map, ObjAtk, focus);
                     }
+                    if (map.map_id == 90){
+                        MapKiemMoney.Obj_Die(map, ObjAtk, focus);
+                    }
                     focus.SetDie(map, ObjAtk);
                     if (!focus.isPlayer() && !focus.isBot() && !focus.isMobDiBuon() && focus.template != null 
                             && focus.template.mob_id >= 89 && focus.template.mob_id <= 92) { // house chien truong
@@ -1349,9 +1303,6 @@ public class MainObject {
             //<editor-fold defaultstate="collapsed" desc="Tính exp       ...">
             if (focus.isMobDungeon()
                     && ObjAtk.isPlayer()) {
-                if (p.level >= 139){
-                    return;
-                }
                 int expup = 0;
                 expup = (int) dame; // tinh exp
                 ef = p.get_EffDefault(-125);
@@ -1412,12 +1363,22 @@ public class MainObject {
                         }
                     }
                     ef = p.get_EffDefault(-125);
+                    ef3 = p.get_EffDefault(-222);
+                    ef4 = p.get_EffDefault(-223);
+                    ef5 = p.get_EffDefault(-224);
+                    ef10 = p.get_EffDefault(-225);
                     if (ef != null) {
                         expup += (expup * (ef.param / 100)) / 100;
+                    }else if (ef3 != null){
+                        expup += (expup * (ef3.param / 100)) / 100;
+                    }else if (ef4 != null){
+                        expup += (expup * (ef4.param / 100)) / 100;
+                    }else if (ef5 != null){
+                        expup += (expup * (ef5.param / 100)) / 100;
+                    }else if (ef10 != null){
+                        expup += (expup * (ef10.param / 100)) / 100;
                     }
                     p.update_Exp(expup, true);
-                }else if (p.level >= 139 && map.map_id == 137){
-                    p.update_Exp(1000000,false);
                 } else if (expup > 0) {
                     p.update_Exp(2, false);
                 }

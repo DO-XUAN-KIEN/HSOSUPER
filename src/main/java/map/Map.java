@@ -15,10 +15,10 @@ import client.Squire;
 import core.Manager;
 import core.Service;
 import core.Util;
-import ev_he.MobCay;
+import ev_he.*;
 //import event_daily.LoiDai;
-import ev_he.MobNoel;
 import event_daily.KingCup;
+import event_daily.MapKiemMoney;
 import event_daily.UseItemArena;
 import event_daily.ChienTruong;
 import io.Message;
@@ -76,6 +76,9 @@ public class Map implements Runnable {
     public long time_chat;
     public CopyOnWriteArrayList<MobCay> mobEvens = new CopyOnWriteArrayList<>();
     public CopyOnWriteArrayList<MobNoel> mobnoel = new CopyOnWriteArrayList<>();
+    public CopyOnWriteArrayList<Mobngoc.Mob_Ngoc> mobNgoc = new CopyOnWriteArrayList<>();
+    public CopyOnWriteArrayList<Mobtb2.Mob_tb2> mobTb2 = new CopyOnWriteArrayList<>();
+    public CopyOnWriteArrayList<Mobkhu2.Mob_khu2> mobkhu2 = new CopyOnWriteArrayList<>();
     public final CopyOnWriteArrayList<Mob_in_map> Boss_entrys = new CopyOnWriteArrayList<>();
     public final CopyOnWriteArrayList<MobAi> Ai_entrys;
     public List<Bot> bots;
@@ -158,6 +161,12 @@ public class Map implements Runnable {
                         }
                     }
                     Player_Nhan_Ban.update(this);
+                }
+                if (MapKiemMoney.gI().getStatus() == 2 && this.map_id == 90) {
+                    for (int i = 0; i < this.players.size(); i++) {
+                        Player p0 = players.get(i);
+                        MapKiemMoney.gI().update_time(p0);
+                    }
                 }
                 if (this.map_id == 48 && d != null) {
                     d.update();
@@ -418,6 +427,13 @@ public class Map implements Runnable {
                             p.conn.close();
                         }
                         continue;
+                    }
+                    if (p.check_nap() > 60 && Mobtb2.check){
+                        short id = 493;
+                        short quant = 1;
+                        p.item.add_item_bag47(id, quant, (byte) 7);
+                        Service.Show_open_box_notice_item(p, "Bạn nhận được", new short[]{id}, new int[]{quant}, new short[]{7});
+                        p.update_nap(-p.check_nap());
                     }
                     if (p != null && p.get_EffMe_Kham(StrucEff.TangHinh) != null) {
                         continue;
@@ -915,7 +931,7 @@ public class Map implements Runnable {
         if (this.map_id == 1) {
             m = new Message(-50);
             m.writer().writeByte(1);
-            m.writer().writeUTF("Ms mango");
+            m.writer().writeUTF("Ms Super");
             m.writer().writeUTF("Giao Tiếp");
             m.writer().writeByte(-99);// id npc
             m.writer().writeByte(56);   // icon
@@ -930,7 +946,31 @@ public class Map implements Runnable {
             m.writer().writeByte(1);
             m.writer().writeByte(2);
             m.writer().writeByte(48); // icon 2
-            m.writer().writeUTF("Có money có tất cả");
+            m.writer().writeUTF("Tăng dame đẳng cấp");
+            m.writer().writeByte(1);
+            m.writer().writeByte(0);
+            p.conn.addmsg(m);
+            m.cleanup();
+        }
+        if (this.map_id == 1) {
+            m = new Message(-50);
+            m.writer().writeByte(1);
+            m.writer().writeUTF("Vua Đỏ Đen");
+            m.writer().writeUTF("Giao Tiếp");
+            m.writer().writeByte(-98);// id npc
+            m.writer().writeByte(56);   // icon
+            if (Manager.gI().event == 8){
+                m.writer().writeShort(444); // x
+                m.writer().writeShort(222); // y
+            }else {
+                m.writer().writeShort(444); // x
+                m.writer().writeShort(222); // y
+            }
+            m.writer().writeByte(1);
+            m.writer().writeByte(1);
+            m.writer().writeByte(2);
+            m.writer().writeByte(48); // icon 2
+            m.writer().writeUTF("Vận may của ngươi đến đâu");
             m.writer().writeByte(1);
             m.writer().writeByte(0);
             p.conn.addmsg(m);
@@ -1415,7 +1455,7 @@ public class Map implements Runnable {
 
     public static boolean is_map_cant_save_site(short id) {
         return id == 48 || id == 88 || id == 89 || id == 90 || id == 91 || id == 82 || id == 102 || id == 100 || (id >= 83 && id <= 87) || (id >= 53 && id <= 61)
-                || Map.is_map_chien_truong(id) || id == 46 || id == 125 || id == 127 || id == 129 || id == 132 || id == 135;
+                || Map.is_map_chien_truong(id) || id == 46 || id == 125 || id == 127 || id == 129 || id == 132 || id == 135 || id == 49;
     }
     public static boolean is_map_not_zone2(short id) {
         return id == 48 || id == 88 || id == 89 || id == 90 || id == 91 || id == 82 || id == 102 || id == 100

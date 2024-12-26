@@ -913,6 +913,10 @@ public class Body2 extends MainObject {
                     MapService.enter(p.map, p);
                 }
             }
+            if(p.get_EffDefault(-130) == null){
+                p.update_HD(1);
+                p.add_EffDefault(-130,1,1000 * 60 * 60 * 1);
+            }
             if (p.pet_di_buon != null && p.pet_di_buon.id_map == p.map.map_id && p.map.zone_id == p.map.maxzone
                     && !p.pet_di_buon.item.isEmpty() && map.time_add_bot < System.currentTimeMillis()) {
                 Bot bot = new Bot(map.baseID--, p);

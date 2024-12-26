@@ -73,10 +73,7 @@ public class ChienTruong {
     public synchronized void update() {
         try {
             if (this.status == 1) {
-                this.time--;
-                if (this.time <= 0) {
-                    this.start();
-                }
+                this.start();
             } else if (this.status == 2) {
                 this.time--;
                 if(this.time == 60* 55){
@@ -93,53 +90,6 @@ public class ChienTruong {
             }
         } catch (IOException e) {
         }
-    }
-    private void create_boss(int i) {
-//		if (i == 20) {
-//			Mob_in_map m = null;
-//			for (int j = 0; j < boss.size(); j++) {
-//				if (boss.get(j).is_boss_active) {
-//					m = boss.get(j);
-//					break;
-//				}
-//			}
-//			if (m == null) {
-//				int index = Util.random(boss.size());
-//				if (!boss.get(index).is_boss_active && boss.get(index).level == 10) {
-//					boss.get(index).level = 100;
-//					boss.get(index).is_boss_active = true;
-//				}
-//				try {
-//					Manager.gI().chatKTGprocess(" Xà nữ xuất hiện tại chiến trường.");
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
-//			} else {
-//				for (int j = 0; j < boss.size(); j++) {
-//					if (!boss.get(j).equals(m) && boss.get(j).zone_id == m.zone_id) {
-//						boss.get(j).level = 100;
-//						boss.get(j).is_boss_active = true;
-//						break;
-//					}
-//				}
-//				try {
-//					Manager.gI().chatKTGprocess(" Xà nữ xuất hiện tại chiến trường.");
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		} else {
-//			int index = Util.random(boss.size());
-//			if (!boss.get(index).is_boss_active && boss.get(index).level == 10) {
-//				boss.get(index).level = 50;
-//				boss.get(index).is_boss_active = true;
-//			}
-//			try {
-//				Manager.gI().chatKTGprocess(" Xà nữ xuất hiện tại chiến trường.");
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//		}
     }
 
     private void start() throws IOException {
@@ -389,7 +339,40 @@ public class ChienTruong {
     public synchronized void register(Player p) throws IOException {
 
         if (this.list.containsKey(p.name)) {
-            Service.send_notice_box(p.conn, "Đã đăng ký rồi");
+            Member_ChienTruong info = ChienTruong.gI().get_infor_register(p.name);
+            p.time_use_item_arena = System.currentTimeMillis() + 250_000;
+            Vgo vgo = new Vgo();
+            switch (info.village) {
+                case 2: { // lang gio
+                    vgo.id_map_go = 55;
+                    vgo.x_new = 224;
+                    vgo.y_new = 256;
+                    MapService.change_flag(p.map, p, 2);
+                    break;
+                }
+                case 3: { // lang lua
+                    vgo.id_map_go = 59;
+                    vgo.x_new = 240;
+                    vgo.y_new = 224;
+                    MapService.change_flag(p.map, p, 1);
+                    break;
+                }
+                case 4: { // lang set
+                    vgo.id_map_go = 57;
+                    vgo.x_new = 264;
+                    vgo.y_new = 272;
+                    MapService.change_flag(p.map, p, 4);
+                    break;
+                }
+                default: { // 5 lang anh sang
+                    vgo.id_map_go = 53;
+                    vgo.x_new = 276;
+                    vgo.y_new = 246;
+                    MapService.change_flag(p.map, p, 5);
+                    break;
+                }
+            }
+            p.change_map(p, vgo);
         } else {
             Member_ChienTruong temp = new Member_ChienTruong();
             temp.name = p.name;
@@ -397,15 +380,48 @@ public class ChienTruong {
             temp.village = 0;
             temp.received = false;
             this.list.put(p.name, temp);
-            Service.send_notice_box(p.conn, "Đăng ký thành công");
+            Service.send_notice_nobox_white(p.conn, "Đăng ký thành công");
+
+            Member_ChienTruong info = ChienTruong.gI().get_infor_register(p.name);
+            p.time_use_item_arena = System.currentTimeMillis() + 250_000;
+            Vgo vgo = new Vgo();
+            switch (info.village) {
+                case 2: { // lang gio
+                    vgo.id_map_go = 55;
+                    vgo.x_new = 224;
+                    vgo.y_new = 256;
+                    MapService.change_flag(p.map, p, 2);
+                    break;
+                }
+                case 3: { // lang lua
+                    vgo.id_map_go = 59;
+                    vgo.x_new = 240;
+                    vgo.y_new = 224;
+                    MapService.change_flag(p.map, p, 1);
+                    break;
+                }
+                case 4: { // lang set
+                    vgo.id_map_go = 57;
+                    vgo.x_new = 264;
+                    vgo.y_new = 272;
+                    MapService.change_flag(p.map, p, 4);
+                    break;
+                }
+                default: { // 5 lang anh sang
+                    vgo.id_map_go = 53;
+                    vgo.x_new = 276;
+                    vgo.y_new = 246;
+                    MapService.change_flag(p.map, p, 5);
+                    break;
+                }
+            }
+            p.change_map(p, vgo);
         }
     }
 
     public synchronized void open_register() throws IOException {
         if (this.status == 0) {
-            Manager.gI().chatKTGprocess("Chiến trường mở đăng ký, mau mau đến ");
             this.status = 1;
-            this.time = 60*44;
         }
     }
 
@@ -522,11 +538,8 @@ public class ChienTruong {
             short sizeRandomMedal = 0;
             switch (mob.template.mob_id) {
                 case 93, 94, 95, 96, 97, 98, 99, 100: {
-                    if(Util.random(100)>90){
-                        id_item_leave7 =new short[]{(short) Util.random(126, 136)};
-                    }
-                    if(Util.random(10000) < 1 ){
-                        id_item_leave3 = new short[]{(short) Util.random(4577, 4585)};
+                    if(Util.random(100)>70){
+                        id_item_leave4 =new short[]{(short) Util.random(359, 363)};
                     }
                     if (Manager.gI().event == 11){
                         if (Util.random(100) < 5){
@@ -538,10 +551,7 @@ public class ChienTruong {
                     break;
                 }
                 case 89,90,91,92: {
-                    id_item_leave7 = new short[]{(short) Util.random(126, 146)};
-                    if(Util.random(5000) < 1){
-                        id_item_leave3 = new short[]{(short) Util.random(4577, 4585)};
-                    }
+                    id_item_leave4 =new short[]{(short) Util.random(359, 363)};
                     if (Manager.gI().event == 11){
                         id_item_leave4 = new short[]{337};
                     }
@@ -554,7 +564,7 @@ public class ChienTruong {
                 ItemTemplate3 temp = ItemTemplate3.item.get(id);
                 LeaveItemMap.leave_item_by_type3(map, id, temp.getColor(), p, temp.getName(), mob.index);
             }
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < 2; i++) {
                 for (short id : id_item_leave4) {
                     if (id == -1) {
                         leave_vang(map, mob, p);

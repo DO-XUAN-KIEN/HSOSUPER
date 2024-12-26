@@ -47,6 +47,7 @@ public class Player extends Body2 {
     public Date date;
     public byte diemdanh;
     public byte chucphuc;
+    public byte banclone;
     public byte quatanthu;
     public byte mm_tt;
     public byte mm_md;
@@ -210,6 +211,7 @@ public class Player extends Body2 {
     public boolean isdothan = false;
     public boolean ismdthan = false;
     public boolean istb2 = false;
+    public boolean istb1 = false;
     public byte ClazzItemStar = -1;
     public byte TypeItemStarCreate = -1;
     public short[] MaterialItemStar;
@@ -228,6 +230,7 @@ public class Player extends Body2 {
         isdothan = false;
         ismdthan = false;
         istb2 = false;
+        istb1 = false;
         isCreateArmor = false;
         ClazzItemStar = -1;
         TypeItemStarCreate = -1;
@@ -393,6 +396,7 @@ public class Player extends Body2 {
                 date = Util.getDate(rs.getString("date"));
                 diemdanh = rs.getByte("diemdanh");
                 chucphuc = rs.getByte("chucphuc");
+                banclone = rs.getByte("banclone");
                 quatanthu = rs.getByte("quatanthu");
                 mm_tt = rs.getByte("mm_tt");
                 mm_md = rs.getByte("mm_md");
@@ -1056,7 +1060,7 @@ public class Player extends Body2 {
                 jsar.clear();
                 for (int i = 0; i < MainEff.size(); i++) {
                     EffTemplate temp = MainEff.get(i);
-                    if (temp.id != -126 && temp.id != -125 && temp.id != -127 && temp.id != -128 && temp.id != -129) {
+                    if (temp.id != -126 && temp.id != -125 && temp.id != -127 && temp.id != -128 && temp.id != -129 && temp.id != -130 && !(temp.id >= -222 && temp.id <= -225)) {
                         continue;
                     }
                     JSONArray jsar21 = new JSONArray();
@@ -1371,6 +1375,7 @@ public class Player extends Body2 {
                 a += ",`kynang` = " + kynang;
                 a += ",`diemdanh` = " + diemdanh;
                 a += ",`chucphuc` = " + chucphuc;
+                a += ",`banclone` = " + banclone;
                 a += ",`quatanthu` = " + quatanthu;
                 a += ",`mm_tt` = " + mm_tt;
                 a += ",`mm_md` = " + mm_md;
@@ -1557,9 +1562,6 @@ public class Player extends Body2 {
             // diem danh
             diemdanh = 1;
             chucphuc = 1;
-            if(quatanthu > 1) {
-                quatanthu = 1;
-            }
             if (Manager.gI().event == 8){
                 diemsukien = 0;
             }
@@ -1590,6 +1592,58 @@ public class Player extends Body2 {
                     conn.addmsg(m);
                     m.cleanup();
 //                    add_EffDefault(-125, 5000, (int) time_eff);
+                }
+                break;
+            }
+            case 2: {//
+                EffTemplate tempp = conn.p.get_EffDefault(-222);
+                if (tempp != null) {
+                    long time_eff = tempp.time - System.currentTimeMillis();
+                    Message m = new Message(62);
+                    m.writer().writeByte(1);
+                    m.writer().writeShort((short) (time_eff / 60000L));
+                    conn.addmsg(m);
+                    m.cleanup();
+                    //add_EffDefault(-222, 7500, (int) time_eff);
+                }
+                break;
+            }
+            case 3: {// x4
+                EffTemplate tempp = conn.p.get_EffDefault(-223);
+                if (tempp != null) {
+                    long time_eff = tempp.time - System.currentTimeMillis();
+                    Message m = new Message(62);
+                    m.writer().writeByte(1);
+                    m.writer().writeShort((short) (time_eff / 60000L));
+                    conn.addmsg(m);
+                    m.cleanup();
+                    //add_EffDefault(-223, 10000, (int) time_eff);
+                }
+                break;
+            }
+            case 4: {// x5
+                EffTemplate tempp = conn.p.get_EffDefault(-224);
+                if (tempp != null) {
+                    long time_eff = tempp.time - System.currentTimeMillis();
+                    Message m = new Message(62);
+                    m.writer().writeByte(1);
+                    m.writer().writeShort((short) (time_eff / 60000L));
+                    conn.addmsg(m);
+                    m.cleanup();
+                    //add_EffDefault(-224, 12500, (int) time_eff);
+                }
+                break;
+            }
+            case 5: {// x10
+                EffTemplate tempp = conn.p.get_EffDefault(-225);
+                if (tempp != null) {
+                    long time_eff = tempp.time - System.currentTimeMillis();
+                    Message m = new Message(62);
+                    m.writer().writeByte(1);
+                    m.writer().writeShort((short) (time_eff / 60000L));
+                    conn.addmsg(m);
+                    m.cleanup();
+                    //add_EffDefault(-225, 25000, (int) time_eff);
                 }
                 break;
             }
@@ -1712,14 +1766,6 @@ public class Player extends Body2 {
     }
     public void update_Exp(long expup, boolean expmulti) throws IOException {
         long dame_exp = expup;
-        if ((conn.p.level >= 140 && conn.p.stt_level < 1) || (conn.p.level >= 141 && conn.p.stt_level < 2) ||
-                (conn.p.level >= 142 && conn.p.stt_level < 3) || (conn.p.level >= 143 && conn.p.stt_level < 4) ||
-                (conn.p.level >= 144 && conn.p.stt_level < 5) || (conn.p.level >= 145 && conn.p.stt_level < 6) ||
-                (conn.p.level >= 146 && conn.p.stt_level < 7) || (conn.p.level >= 147 && conn.p.stt_level < 8) ||
-                (conn.p.level >= 148 && conn.p.stt_level < 9) || (conn.p.level >= 149 && conn.p.stt_level < 10) ||
-                (conn.p.level >= 150 && conn.p.stt_level < 11) && !(conn.p.map_id == 136)){
-            return;
-        }
         if (expmulti && this.getlevelpercent() >= 0) {
             dame_exp *= Manager.gI().exp;
         }
@@ -1913,6 +1959,33 @@ public class Player extends Body2 {
         try ( Connection connection = SQL.gI().getConnection();  Statement ps = connection.createStatement();  ResultSet rs = ps.executeQuery(query)) {
             rs.next();
             result = rs.getByte("Vip");
+        } catch (SQLException e) {
+            result = 0;
+        }
+        return result;
+    }
+    public synchronized boolean update_HD(int coin_exchange) throws IOException {
+        String query = "SELECT `hoatdong` FROM `account` WHERE `user` = '" + conn.user + "' LIMIT 1;";
+        int coin_old = 0;
+        try (Connection connection = SQL.gI().getConnection(); Statement ps = connection.createStatement(); ResultSet rs = ps.executeQuery(query)) {
+            rs.next();
+            coin_old = rs.getInt("hoatdong");
+            coin_old += coin_exchange;
+            if (ps.executeUpdate(
+                    "UPDATE `account` SET `hoatdong` = " + coin_old + " WHERE `user` = '" + conn.user + "'") == 1) {
+                connection.commit();
+            }
+        } catch (SQLException e) {
+            Service.send_notice_box(conn, "Đã xảy ra lỗi5");
+        }
+        return true;
+    }
+    public synchronized int check_HD() {
+        int result = 0;
+        String query = "SELECT `hoatdong` FROM `account` WHERE `user` = '" + conn.user + "' LIMIT 1;";
+        try ( Connection connection = SQL.gI().getConnection();  Statement ps = connection.createStatement();  ResultSet rs = ps.executeQuery(query)) {
+            rs.next();
+            result = rs.getInt("hoatdong");
         } catch (SQLException e) {
             result = 0;
         }

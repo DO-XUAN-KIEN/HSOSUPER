@@ -28,7 +28,7 @@ import template.Horse;
 public class Clan {
 
     public static final short[] item_shop
-            = new short[]{19, 20, 146, 159, 160, 161, 163, 228, 229, 230, 231, 232, 233, 234};
+            = new short[]{19, 20, 146, 159, 160, 161, 163, 228, 229, 230, 231, 232, 233, 234, 369, 370, 371, 372, 373, 374, 375};
     public static final List<Clan> entrys = new ArrayList<>();
     public static int[] vang_upgrade = new int[]{0, 1_000_000};
     public static int[] ngoc_upgrade = new int[]{0, 1_000};

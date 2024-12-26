@@ -63,7 +63,6 @@ public class Event_8 {
             entrys.clear();
         }
         if(timeCreate > 0 && (time - timeCreate) / 1000 / 60 > 44){
-
         }
     }
 
@@ -71,13 +70,12 @@ public class Event_8 {
         long time = System.currentTimeMillis();
         timeCreate = time;
         short idx = 30000;
-
         synchronized (entrys) {
             // Tạo danh sách ID map hợp lệ từ 1-98
             List<Integer> validMapIds = new ArrayList<>();
             for (int i = 1; i <= 98; i++) {
                 Map m = Map.get_id(i); // Giả sử Map.getById() lấy map dựa trên ID
-                if (m != null && !m.ismaplang && !m.showhs && m.typemap == 0 && !Map.is_map_cant_save_site(m.map_id)) {
+                if (m != null && !m.ismaplang && !m.showhs && m.typemap == 0 && !Map.is_map_cant_save_site(m.map_id) && !(m.map_id == 49 || m.map_id == 81)) {
                     validMapIds.add(i);
                 }
             }

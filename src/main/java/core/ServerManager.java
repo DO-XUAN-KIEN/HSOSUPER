@@ -2,6 +2,9 @@ package core;
 
 import BossHDL.BossTG;
 import Helps._Time;
+import ev_he.Mobkhu2;
+import ev_he.Mobngoc;
+import ev_he.Mobtb2;
 import event.Event_1;
 import event.NauKeo;
 import java.io.IOException;
@@ -9,10 +12,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Calendar;
 
-import event_daily.ChiemThanhManager;
-import event_daily.ChienTruong;
-import event_daily.KingCup;
-import event_daily.KingCupManager;
+import event_daily.*;
 import io.Session;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -304,11 +304,36 @@ public class ServerManager implements Runnable {
                             Event_1.sort_bxh();
                         }
                     }
-                    if (DayOfWeek % 2 !=0 && hour == 20 && min ==45 && sec == 0) {
+                    if (DayOfWeek % 2 !=0 && hour == 21 && min == 0 && sec == 0) {
                         ChienTruong.gI().open_register();
                         Manager.gI().chatKTGprocess("Chiến Trường Đã Bắt Đầu Nhanh Tay Lẹ Chân Lên");
                     }
+                    if (hour == 17 && min == 0 && sec == 0){
+                        MapKiemMoney.gI().open_register();
+                    }
+                    if (hour >= 6 && hour <= 8) {
+                        if (hour == 6 && min == 10 && sec == 0) {
+                            Mobngoc.runing = true;
+                            Manager.gI().chatKTGprocess("Map kiếm ngọc khảm đã mở nhanh chân đến NPC super để tham gia");
+                        }else if (hour == 7 && min == 0 && sec == 0){
+                            Manager.gI().chatKTGprocess("Map kiếm ngọc khảm đã mở đóng");
+                            Mobngoc.runing = false;
+                        }
+                    }
+                    if (hour >= 20 && hour <= 22){
+                        if (hour == 20 && min == 10 && sec == 0){
+                            Manager.gI().chatKTGprocess("Map TB2 đã mở nhanh chân đến NPC super để tham gia");
+                            Mobtb2.runing = true;
+                        }else if (hour == 21 && min == 0 && sec == 0){
+                            Manager.gI().chatKTGprocess("Map TB2 đã mở đóng");
+                            Mobtb2.runing = false;
+                        }
+                    }
+                    Mobtb2.Update();
+                    Mobngoc.Update();
+                    Mobkhu2.Update();
                     ChienTruong.gI().update();
+                    MapKiemMoney.gI().update();
                     if(DayOfWeek % 2==0 && hour >= 20 && hour <= 23){
                         checkError = 16;
                         if(hour == 20 && min == 45)

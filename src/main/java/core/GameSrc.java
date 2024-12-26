@@ -1,5 +1,6 @@
 package core;
 
+import History.His_COIN;
 import History.His_KMB;
 
 import java.io.IOException;
@@ -2148,37 +2149,47 @@ public class GameSrc {
                     Service.send_notice_box(p.conn, "Vật phẩm chưa có lỗ đục hoặc không có lỗ dư!");
                     return;
                 }
-                int vang_total = (GameSrc.get_vang_hopngoc(id_g1) / 50_000) * 1_000_000;
-                if (p.get_vang() < vang_total) {
-                    Service.send_notice_box(p.conn, "Không đủ " + (vang_total) + " vàng!");
+                long vang_total = 100000000;
+                int ngoc_total = 100000;
+                int coin_total = 100000;
+                if (p.get_vang() < vang_total || p.get_ngoc() < ngoc_total || p.checkcoin() < coin_total) {
+                    if (p.get_vang() < vang_total) {
+                        Service.send_notice_box(p.conn, "Không đủ " + (vang_total) + " vàng!");
+                    }else if (p.get_ngoc() < ngoc_total){
+                        Service.send_notice_box(p.conn, "Không đủ " + (ngoc_total) + " ngọc!");
+                    }else {
+                        Service.send_notice_box(p.conn, "Không đủ " + (coin_total) + " coin!");
+                    }
                     return;
                 }
                 Message m = new Message(-100);
-                // 5 open
-                if (5 > Util.random(100) || (p.conn.ac_admin > 3 && Manager.BuffAdmin)) {
-                    if (!Helps.Kham_Item.KhamNgoc(id_g1, it3)) {
-                        Service.send_notice_box(p.conn, "Không thể khảm!");
-                        return;
-                    }
-                    for (int i = 0; i < it3.op.size(); i++) {
-                        if (it3.op.get(i).id == (index_ngoc_kham_vao + 58)) {
-                            it3.op.get(i).setParam(id_g1);
-                            break;
-                        }
-                    }
-                    m.writer().writeByte(3);
-                    m.writer().writeUTF("Thành công, chúc mừng");
-                } else {
-                    m.writer().writeByte(4);
-                    m.writer().writeUTF("Chúc con may mắn lần sau!");
+                if (!Helps.Kham_Item.KhamNgoc(id_g1, it3)) {
+                    Service.send_notice_box(p.conn, "Không thể khảm!");
+                    return;
                 }
+                for (int i = 0; i < it3.op.size(); i++) {
+                    if (it3.op.get(i).id == (index_ngoc_kham_vao + 58)) {
+                        it3.op.get(i).setParam(id_g1);
+                        break;
+                    }
+                }
+                m.writer().writeByte(3);
+                m.writer().writeUTF("Thành công, chúc mừng");
                 m.writer().writeShort(it3.id);
                 m.writer().writeByte(3);
                 p.conn.addmsg(m);
                 m.cleanup();
                 //
                 p.update_vang(-vang_total);
-                Log.gI().add_log(p.name, "Trừ " + vang_total + " khảm ngọc");
+                p.update_ngoc(-ngoc_total);
+                p.update_coin(-coin_total);
+
+                His_COIN hisc = new His_COIN(p.conn.user ,p.name);
+                hisc.coin_change = (int) coin_total;
+                hisc.coin_last = p.checkcoin();
+                hisc.Logger = "(TRỪ COIN) từ Khảm ngọc";
+                hisc.Flus();
+
                 p.item.remove(7, id_g1, 1);
                 p.item.char_inventory(4);
                 p.item.char_inventory(7);

@@ -314,125 +314,26 @@ public class LeaveItemMap {
 
             short sizeRandomMedal = 0;
             switch (mob.template.mob_id) {
-                case 101: { // xa nu
-                    id_item_leave4 = new short[]{-1, -1, -1, -1, -1, -1};
-                    if(Util.random(100)<10){
-                        id_item_leave7 = new short[]{(short) Util.random(481,493)};
-                    }
-                    if(Manager.gI().event == 11){
-                        id_item_hongio = new short[]{336};
-                    }
-                    id_item_leave_boss = new short[]{138,(short) Util.random(472,480)};
-                    sizeRandomMedal = (short) (30);
-                    break;
-                }
-                case 84: { // de vang
-                    id_item_leave4 = new short[]{-1, -1, -1, -1, -1, -1, 27, 27};
-                    if(Util.random(100)<10){
-                        id_item_leave7 = new short[]{(short) Util.random(481,493)};
-                    }
-                    if(Manager.gI().event == 11){
-                        id_item_hongio = new short[]{336};
-                    }
-                    id_item_leave_boss = new short[]{139,(short) Util.random(472,480)};
-                    sizeRandomMedal = (short) (35);
-
-                    break;
-                }
-                case 83: { // de bac
-                    id_item_leave4 = new short[]{-1, -1, -1, -1, -1, -1};
-                    if(Util.random(100)<10){
-                        id_item_leave7 = new short[]{(short) Util.random(481,493)};
-                    }
-                    if(Manager.gI().event == 11){
-                        id_item_hongio = new short[]{336};
-                    }
-                    id_item_leave_boss = new short[]{141,(short) Util.random(472,480)};
-                    sizeRandomMedal = (short) (45);
-                    break;
-                }
-                case 103: { // bo cap chua
-                    id_item_leave4 = new short[]{-1, -1, -1, -1, -1, -1, 48, 50, 18, 9, 48, 50, 18, 9, 2, 5, 2, 5, 2, 5, 2, 5};
-                    if(Util.random(100)<10){
-                        id_item_leave7 = new short[]{(short) Util.random(481,493)};
-                    }
-                    if(Manager.gI().event == 11){
-                        id_item_hongio = new short[]{336};
-                    }
-                    id_item_leave_boss = new short[]{136,(short) Util.random(472,480)};
-                    sizeRandomMedal = (short) (20);
-                    break;
-                }
-                case 104: { // quy 1 mat
-                    id_item_leave4 = new short[]{-1, -1, -1, -1, -1, -1, 10, 10};
-                    if(Util.random(100)<10){
-                        id_item_leave7 = new short[]{(short) Util.random(481,493)};
-                    }
-                    if(Manager.gI().event == 11){
-                        id_item_hongio = new short[]{336};
-                    }
-                    id_item_leave_boss = new short[]{137,(short) Util.random(472,480)};
-                    sizeRandomMedal = (short) (25);
-                    break;
-                }
-                case 105: { // quy dau bo
-                    id_item_leave4 = new short[]{-1, -1, -1, -1, -1, -1, 49, 49};
-                    if(Util.random(100)<10){
-                        id_item_leave7 = new short[]{(short) Util.random(481,493)};
-                    }
-                    if(Manager.gI().event == 11){
-                        id_item_hongio = new short[]{336};
-                    }
-                    id_item_leave_boss = new short[]{140,(short) Util.random(472,480)};
-                    sizeRandomMedal = (short) (40);
-                    break;
-                }
-                case 106: { // ky sy dia nguc
-                    id_item_leave4 = new short[]{-1, -1, -1, -1, -1, -1, 18};
-                    if(Util.random(100)<10){
-                        id_item_leave7 = new short[]{(short) Util.random(481,493)};
-                    }
-                    if(Manager.gI().event == 11){
-                        id_item_hongio = new short[]{336};
-                    }
-                    id_item_leave_boss = new short[]{142,(short) Util.random(472,480)};
-                    sizeRandomMedal = (short) (50);
-                    break;
-                }
-                case 149: { // nhen chua
-                    id_item_leave4 = new short[]{-1, -1, -1, -1, -1, -1, 18};
-                    if(Util.random(100)<10){
-                        id_item_leave7 = new short[]{(short) Util.random(481,493)};
-                    }
-                    if(Manager.gI().event == 11){
-                        id_item_hongio = new short[]{336};
-                    }
-                    id_item_leave_boss = new short[]{136,138,140,142,143,(short) Util.random(472,480)};
-                    sizeRandomMedal = (short) (55);
-                    break;
-                }
-                case 155: { // giant skeleton
-                    id_item_leave4 = new short[]{-1, -1, -1, -1, -1, -1, 18};
-                    if(Util.random(100)<10){
-                        id_item_leave7 = new short[]{(short) Util.random(481,493)};
-                    }
-                    if(Manager.gI().event == 11){
-                        id_item_hongio = new short[]{336};
-                    }
-                    id_item_leave_boss = new short[]{144,145,137,139,141,(short) Util.random(472,480)};
-                    sizeRandomMedal = (short) (60);
+                case 101, 83, 84, 103, 104, 105, 106, 149, 155: { // boss khu ngoài
+                    id_item_leave4 = new short[]{-1, -1, -1, -1, -1, -1, 358};
+//                    id_item_leave4 = new short[]{-1, -1, -1, -1, -1, -1};
+//                    if(Util.random(100)<10){
+//                        id_item_leave7 = new short[]{(short) Util.random(481,493)};
+//                    }
+//                    if(Manager.gI().event == 11){
+//                        id_item_hongio = new short[]{336};
+//                    }
+//                    id_item_leave_boss = new short[]{138,(short) Util.random(472,480)};
+//                    sizeRandomMedal = (short) (30);
                     break;
                 }
                 case 173, 195, 196, 197, 186, 187, 188: { //boss khu event
-                    id_item_leave4 = new short[]{-1, -1, -1, -1, -1, -1, 273, 274, 251};
-                    if(Util.random(100)<10){
-                        id_item_leave7 = new short[]{(short) Util.random(481,493)};
-                    }
+                    id_item_leave4 = new short[]{-1, -1, -1, -1, -1, -1, 357};
                     if(Manager.gI().event == 11){
                         id_item_hongio = new short[]{336};
                     }
-                    id_item_leave = new short[]{(short) Util.random(481, 493)};
-                    id_item_leave7 = new short[]{14};
+//                    id_item_leave = new short[]{(short) Util.random(481, 493)};
+//                    id_item_leave7 = new short[]{14};
                     // sizeRandomMedal = (short) (60);
                     break;
                 }
@@ -932,7 +833,7 @@ public class LeaveItemMap {
     public static void randomMD(Session conn) throws IOException {
         try {
             List<box_item_template> ids = new ArrayList<>();
-            byte tier = (byte) Util.random(0, 8);
+            byte tier = (byte) Util.random(0, 7);
             short id_item = (short) Util.random(4587, 4591);
             Item3 itbag = new Item3();
             itbag.id = id_item;

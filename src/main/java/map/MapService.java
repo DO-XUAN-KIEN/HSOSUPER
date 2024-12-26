@@ -15,8 +15,12 @@ import core.Manager;
 import core.MenuController;
 import core.Service;
 import core.Util;
+import ev_he.Mobkhu2;
+import ev_he.Mobngoc;
+import ev_he.Mobtb2;
 import event_daily.ChiemThanhManager;
 import event_daily.ChienTruong;
+import event_daily.MapKiemMoney;
 import gamble.VXMM2;
 //import event_daily.LoiDai;
 import io.Message;
@@ -54,7 +58,7 @@ public class MapService {
                     p.typepk = -1;
                 }
             }
-            if (map.map_id == 11 && Manager.gI().event == 7) {
+            if ((map.map_id == 11 && Manager.gI().event == 7) || map.map_id == 49) {
                 p.typepk = 0;
             }
             map.send_map_data(p);
@@ -182,10 +186,7 @@ public class MapService {
     public static void send_msg_player_inside(Map map, MainObject mainObj, Message m, boolean included) {
         for (int i = 0; i < map.players.size(); i++) {
             Player p0 = map.players.get(i);
-            if (p0.map.map_id == 7 && Manager.gI().bossTG.id == 2 && p0 != null && !p0.isSquire
-                    || Map.is_map__load_board_player(map.map_id) && (included || (mainObj.index != p0.index))) {
-                p0.conn.addmsg(m);
-            } else if (p0 != null && !p0.isSquire && ((Math.abs(p0.x - mainObj.x) < 1500 && Math.abs(p0.y - mainObj.y) < 1500)
+            if (p0 != null && !p0.isSquire && ((Math.abs(p0.x - mainObj.x) < 1500 && Math.abs(p0.y - mainObj.y) < 1500)
                     || Map.is_map__load_board_player(map.map_id)) && (included || (mainObj.index != p0.index))) {
                 p0.conn.addmsg(m);
             }
@@ -369,6 +370,49 @@ public class MapService {
         for (ev_he.MobNoel temp : map.mobnoel) {
             if ((Math.abs(temp.x - p.x) < 300 && Math.abs(temp.y - p.y) < 300) || Map.is_map__load_board_player(map.map_id)) {
 
+                if (!p.other_mob_inside.containsKey((int) temp.index)) {
+                    p.other_mob_inside.put((int) temp.index, true);
+                }
+                if (!p.other_mob_inside_update.containsKey((int) temp.index)) {
+                    p.other_mob_inside_update.put((int) temp.index, false);
+                }
+                if (p.other_mob_inside.get((int) temp.index)) {
+                    temp.SendMob(p.conn);
+                    p.other_mob_inside.replace((int) temp.index, true, false);
+                }
+            }
+        }
+        for (Mobngoc.Mob_Ngoc temp : map.mobNgoc) {
+            if ((Math.abs(temp.x - p.x) < 300 && Math.abs(temp.y - p.y) < 300) || Map.is_map__load_board_player(map.map_id)) {
+
+                if (!p.other_mob_inside.containsKey((int) temp.index)) {
+                    p.other_mob_inside.put((int) temp.index, true);
+                }
+                if (!p.other_mob_inside_update.containsKey((int) temp.index)) {
+                    p.other_mob_inside_update.put((int) temp.index, false);
+                }
+                if (p.other_mob_inside.get((int) temp.index)) {
+                    temp.SendMob(p.conn);
+                    p.other_mob_inside.replace((int) temp.index, true, false);
+                }
+            }
+        }
+        for (Mobtb2.Mob_tb2 temp : map.mobTb2) {
+            if ((Math.abs(temp.x - p.x) < 300 && Math.abs(temp.y - p.y) < 300) || Map.is_map__load_board_player(map.map_id)) {
+                if (!p.other_mob_inside.containsKey((int) temp.index)) {
+                    p.other_mob_inside.put((int) temp.index, true);
+                }
+                if (!p.other_mob_inside_update.containsKey((int) temp.index)) {
+                    p.other_mob_inside_update.put((int) temp.index, false);
+                }
+                if (p.other_mob_inside.get((int) temp.index)) {
+                    temp.SendMob(p.conn);
+                    p.other_mob_inside.replace((int) temp.index, true, false);
+                }
+            }
+        }
+        for (Mobkhu2.Mob_khu2 temp : map.mobkhu2) {
+            if ((Math.abs(temp.x - p.x) < 300 && Math.abs(temp.y - p.y) < 300) || Map.is_map__load_board_player(map.map_id)) {
                 if (!p.other_mob_inside.containsKey((int) temp.index)) {
                     p.other_mob_inside.put((int) temp.index, true);
                 }
@@ -762,7 +806,7 @@ public class MapService {
         if (Map.is_map_chien_truong(map.map_id)) {
             return;
         }
-        if (map.map_id == 11 && Manager.gI().event == 7){
+        if ((map.map_id == 11 && Manager.gI().event == 7) || map.map_id == 49){
             return;
         }
         if ((Map.is_map_chiem_mo(map, true) && Manager.gI().chiem_mo.isRunning()) || map.kingCupMap != null) {
@@ -1504,6 +1548,15 @@ public class MapService {
                 (Manager.logErrorLogin ? "tắt" : "bật") + " log bug", "disconnect client", "check bug", "fix bug"});
         } else if (chat.equals("xhboss") && conn.ac_admin > 111) {
             Manager.gI().bossTG.refresh();
+        }else if (chat.equals("haha")) {
+            Service.send_notice_box(conn,"Mở map money");
+            MapKiemMoney.gI().open_register();
+        }else if (chat.equals("haha1")){
+            Service.send_notice_box(conn,"Mở map ngọc");
+            Mobngoc.runing = true;
+        }else if (chat.equals("haha2")){
+            Service.send_notice_box(conn,"Mở map tb2");
+            Mobtb2.runing = true;
         } else if (conn.ac_admin > 3 && chat.equals("xem")) {
             int num = 0;
             int count = 0;

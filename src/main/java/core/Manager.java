@@ -159,8 +159,15 @@ public class Manager {
             if (id == 151 || id == 152) {
                 b = 17;
             }
-            if (id == 129){
-                name = "Ông già noel";
+            if (id == 129 || id == 167 || id == 168 || id == 169){
+                if (id == 129)
+                    name = "Ông già noel";
+                if (id == 167)
+                    name = "Ngọc tổ";
+                if (id == 168)
+                    name = "Ăn Xin";
+                if (id == 169)
+                    name = "Hãy chọn ta";
                 b = 15;
             }
             ou.writeShort(id);
@@ -821,7 +828,11 @@ public class Manager {
                 Level temp2 = new Level();
                 temp2.level = (short) i;
                 temp2.exp = Level.entrys.get(i - 2).exp;
-                temp2.tiemnang = 5;
+                if (temp2.level > 140){
+                    temp2.tiemnang = 1;
+                }else {
+                    temp2.tiemnang = 5;
+                }
                 temp2.kynang = 1;
                 Level.entrys.add(temp2);
             }

@@ -186,13 +186,11 @@ public class Mob_in_map extends MainObject {
                             }
                             if (percent > Util.random(0, 500) && zone_id == 1 && !Map.is_map_not_zone2(map_id)
                                     && p.get_EffDefault(-127) != null) {
-                                if(Util.random(20000) < 4) {
-                                    LeaveItemMap.leave_item_by_type7(map, (short) 494, p, mob.index);
-                                }
                                 if (Util.random(0, 10) < 2) {
-                                    LeaveItemMap.leave_item_by_type7(map, (short) Util.random(116, 126), p, mob.index);
-                                } else {
                                     LeaveItemMap.leave_item_by_type7(map, (short) 13, p, mob.index);
+                                }
+                                if (Util.random(0,100) < 5){
+                                    LeaveItemMap.leave_item_by_type4(map,(short) 364,p,mob.index);
                                 }
                                 if (Manager.gI().event == 11){
                                     if (Util.random(300) < 4){
@@ -209,9 +207,9 @@ public class Mob_in_map extends MainObject {
                             if (percent + 10 > Util.random(0, 300)) {
                                 LeaveItemMap.leave_vang(map, mob, (Player) mainAtk);
                             }
-                            if (percent + 10 > Util.random(0, 300)) {
-                                LeaveItemMap.leave_material(map, mob, (Player) mainAtk);
-                            }
+//                            if (percent + 10 > Util.random(0, 300)) {
+//                                LeaveItemMap.leave_material(map, mob, (Player) mainAtk);
+//                            }
                             if (Manager.gI().event != 0 && 30 > Util.random(0, 100) && Math.abs(mob.level - mainAtk.level) <= 5) {
                                 LeaveItemMap.leave_item_event(map, mob, (Player) mainAtk);
                             }

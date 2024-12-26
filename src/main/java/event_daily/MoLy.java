@@ -9,9 +9,9 @@ import template.ItemTemplate3;
 
 public class MoLy {
 
-    public static short[] item_mo_ly = new short[]{2939, 4640, 4639, 4641, 4638, 14, 4789, 4790};
-    public static byte[] item_mo_ly_type = new byte[]{3, 3, 3, 3, 3, 7, 3, 3};
-    public static byte[] item_mo_ly_percent = new byte[]{15, 5, 5, 5, 5, 10, 1, 1};
+    public static short[] item_mo_ly = new short[]{4640, 4639, 4641, 4638, 14, 4789, 4790, 4677, 4678, 4680, 4681, 4683, 4684};// id item mo ly
+    public static byte[] item_mo_ly_type = new byte[]{3, 3, 3, 3, 7, 3, 3, 3, 3, 3, 3, 3, 3};// id ở item mấy
+    public static byte[] item_mo_ly_percent = new byte[]{5, 5, 5, 5, 10, 1, 1, 1, 1, 1, 1, 1, 1};// tỉ lệ ra
 
     public static void show_table_to_choose_item(Player p) throws IOException {
         p.id_select_mo_ly = -1;

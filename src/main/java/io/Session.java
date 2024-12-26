@@ -433,28 +433,28 @@ public class Session implements Runnable {
                 noticelogin("Vượt quá số lượng ip có thể truy cập vào thời điểm này!");
                 return;
             }
-            try (Connection connect = SQL.gI().getConnection(); Statement ps = connect.createStatement()) {
-                // Đếm số lượng IP trùng nhau
-                ResultSet rs = ps.executeQuery("SELECT COUNT(*) AS ip_count FROM account WHERE ip = '" + this.ip + "'");
-                int ipCount = 0;
-                if (rs.next()) {
-                    ipCount = rs.getInt("ip_count");
-                }
-                // Kiểm tra số lượng IP trùng nhau
-                if (ipCount >= 3) {
-                    noticelogin("Số lượng IP đăng ký đã đạt giới hạn, vui lòng thử lại sau!");
-                    // Xóa tài khoản vừa mới tạo
-                    String deleteQuery = "DELETE FROM `account` WHERE `user` = '" + user + "'";
-                    try (Statement deleteStatement = connect.createStatement()) {
-                        deleteStatement.executeUpdate(deleteQuery);
-                        connect.commit();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                        noticelogin("Có lỗi xảy ra trong quá trình xóa tài khoản!");
+                try (Connection connect = SQL.gI().getConnection(); Statement ps = connect.createStatement()) {
+                    // Đếm số lượng IP trùng nhau
+                    ResultSet rs = ps.executeQuery("SELECT COUNT(*) AS ip_count FROM account WHERE ip = '" + this.ip + "'");
+                    int ipCount = 0;
+                    if (rs.next()) {
+                        ipCount = rs.getInt("ip_count");
                     }
+                    // Kiểm tra số lượng IP trùng nhau
+                    if (ipCount >= 3) {
+                        noticelogin("Số lượng IP đăng ký đã đạt giới hạn, vui lòng thử lại sau!");
+                        // Xóa tài khoản vừa mới tạo
+                        String deleteQuery = "DELETE FROM `account` WHERE `user` = '" + user + "'";
+                        try (Statement deleteStatement = connect.createStatement()) {
+                            deleteStatement.executeUpdate(deleteQuery);
+                            connect.commit();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                            noticelogin("Có lỗi xảy ra trong quá trình xóa tài khoản!");
+                        }
 
-                    return;
-                }
+                        return;
+                    }
                 // Tiếp tục xử lý đăng ký khi số lượng IP chưa đạt giới hạn
                 user = "knightauto_hsr_" + String.valueOf(System.nanoTime());
                 pass = "hsr_132";

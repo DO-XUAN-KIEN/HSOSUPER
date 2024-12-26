@@ -126,7 +126,7 @@ public class Process_Yes_no_box {
                     }
                 }
                 case -112: {
-                    if (conn.p.checkcoin() < 5_000) {
+                    if (conn.p.checkcoin() < 1_000) {
                         Service.send_notice_box(conn, "Không đủ coin");
                         return;
                     }
@@ -135,11 +135,11 @@ public class Process_Yes_no_box {
                         Service.send_notice_box(conn, "Khu vực đầy!!!");
                         return;
                     }
-                    conn.p.update_coin(-5_000);
+                    conn.p.update_coin(-1_000);
                     His_COIN hisc = new His_COIN(conn.user ,conn.p.name);
-                    hisc.coin_change = 5000;
+                    hisc.coin_change = 1000;
                     hisc.coin_last = conn.p.checkcoin();
-                    hisc.Logger = "(TRỪ COIN) từ làng phủ sương";
+                    hisc.Logger = "(TRỪ COIN) từ vào khu 2";
                     hisc.Flus();
                     //Log.gI().add_log(conn.p.name, "trừ 5k coin từ làng phủ sương");
                     conn.p.add_EffDefault(-127, 1, 2 * 60 * 60 * 1000);

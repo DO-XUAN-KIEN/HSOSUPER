@@ -136,8 +136,6 @@ public class DailyQuest {
                     : (p.quest_daily[1] == 2 ? Util.random(400, 500)
                     : (p.quest_daily[1] == 1 ? Util.random(10, 200) : Util.random(10, 20)));
             int exp = Util.random(1000, 10000) * (p.quest_daily[1] + 1) * p.quest_daily[2];
-            p.update_vang(vang);
-            Log.gI().add_log(p.name, "Nhận " + vang + " nhiệm vụ hàng ngày");
             p.update_coin(ngoc);
             His_COIN hisc = new His_COIN(p.conn.user ,p.name);
             hisc.coin_change = ngoc;
@@ -182,7 +180,7 @@ public class DailyQuest {
             p.item.char_inventory(4);
             p.item.char_inventory(7);
             Service.send_notice_box(p.conn,
-                    "Trả thành công, nhận được " + vang + " vàng, " + ngoc + " coin và " + exp + " kinh nghiệm!");
+                    "Trả thành công, nhận được " + ngoc + " coin và " + exp + " kinh nghiệm!");
             p.quest_daily[0] = -1;
             p.quest_daily[1] = -1;
             p.quest_daily[2] = 0;
