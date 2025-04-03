@@ -86,35 +86,68 @@ public class Option {
         long parbuffer = this.param;
         //return param;
         if (tier == 0) {
-            return (int) param;
+            if(idItem == 4909 || idItem == 4910 || idItem == 2940 || idItem == 3610){
+                 return 0;
+            }else {
+                return (int) param;
+            }
         }
         //
-
+        if (this.id >= 0 && this.id <= 6) {
+            if(idItem == 4909 || idItem == 4910 || idItem == 2940 || idItem == 3610){
+                parbuffer *= 0;
+            }
+            return (int) (parbuffer*8) / 5;
+        }
         if (this.id >= 29 && this.id <= 36 || this.id >= 16 && this.id <= 22 || this.id == 41) {
-            parbuffer += 20L * tier;
+            if(idItem == 4909 || idItem == 4910 || idItem == 2940 || idItem == 3610){
+                parbuffer *= 0;
+            }else {
+                parbuffer += 5L * tier;
+            }
             return (int) parbuffer;
         }
 
         if (this.id >= 23 && this.id <= 26) {
-            parbuffer = parbuffer + tier;
+            if (idItem >= 2880 && idItem <= 2935) {
+                parbuffer = parbuffer + tier;
+            }else if(idItem == 4909 || idItem == 4910 || idItem == 2940 || idItem == 3610){
+                parbuffer *= 0;
+            }
             return (int) parbuffer;
         }
         if (this.id == 42) {
-            parbuffer = parbuffer + tier * 400L;
+            if(idItem == 4909 || idItem == 4910 || idItem == 2940 || idItem == 3610){
+                parbuffer *= 0;
+            }else {
+                parbuffer = parbuffer + tier * 100L;
+            }
             return (int) parbuffer;
         }
         if ((this.id >= 7 && this.id <= 13) || this.id == 15 || this.id == 27 || this.id == 28) {
-            parbuffer = parbuffer + 100L * tier;
+            if(idItem == 4909 || idItem == 4910 || idItem == 2940 || idItem == 3610){
+                parbuffer *= 0;
+            }else {
+                parbuffer = parbuffer + 5L * tier;
+            }
             return (int)parbuffer;
         }
         if ((this.id == 37 || this.id == 38) && tier < 9) {
-            return 1;
+            if(idItem == 4909 || idItem == 4910 || idItem == 2940 || idItem == 3610){
+                return 0;
+            }else {
+                return 1;
+            }
         }
         if (tier > 15) {
             tier = 15;
         }
-        if ((this.id >= 0 && this.id <= 6) || this.id == 14 || this.id == 40) {
-            parbuffer = (parafterupdate[tier] * this.param) / 100L;
+        if (this.id == 14 || this.id == 40) {
+            if(idItem == 4909 || idItem == 4910 || idItem == 2940 || idItem == 3610){
+                parbuffer *= 0;
+            }else {
+                parbuffer = (parafterupdate[tier] * this.param) / 150L;
+            }
             return (int) parbuffer;
         }
         return (int) parbuffer;
@@ -132,28 +165,27 @@ public class Option {
         //
         int parbuffer = this.param;
         if (this.id >= 0 && this.id <= 6) {
-            return (parbuffer + ((int) (parbuffer * tier * 0.33)));
+            return (parbuffer + ((int)(parbuffer * tier * 0.3)));
         }
-
         if (this.id == 81 || this.id == 86 || this.id == 88 || this.id == 77 || this.id == 79) // giây dòng vip
         {
-            return (int) (parbuffer * tier * 0.3);
+            return (int) (parbuffer * tier * 0.1);
         }
         if (this.id == 85 || this.id == 87 || this.id == 80 || this.id == 82) // dòng vip
         {
-            return (int) (parbuffer * tier * 0.031);
+            return (int) (parbuffer * tier * 0.01);
         }
         if (this.id == 78 || this.id == 76) // dòng vip
         {
-            return (int) (parbuffer * tier * 0.1);
+            return (int) (parbuffer * tier * 0.01);
         }
 
         if ((this.id >= 76 && this.id <= 89) || this.id == 97 || this.id == 98 || this.id == 95) // dòng vip
         {
-            return (int) (parbuffer * tier * 0.07);
+            return (int) (parbuffer * tier * 0.01);
         }
         if (this.id >= 29 && this.id <= 36 || this.id >= 16 && this.id <= 22 || this.id == 41) {
-            parbuffer += 50 * tier;
+            parbuffer += 15 * tier;
             return parbuffer;
         }
 
@@ -164,17 +196,17 @@ public class Option {
             return (parbuffer + tier * 400);
         }
         if ((this.id >= 7 && this.id <= 13)) {
-            return (this.param * tier);
+            return (this.param * tier / 20);
         }
         if (this.id == 15 || this.id == 27 || this.id == 28) {
-            return (parbuffer + 100 * tier);
+            return (parbuffer + 30 * tier);
         }
 
         if (tier > 15) {
             tier = 15;
         }
         if ((this.id >= 0 && this.id <= 6) || this.id == 14 || this.id == 40) {
-            parbuffer = (parafterupdate[tier] * this.param) / 100;
+            parbuffer = (parafterupdate[tier] * this.param) / 150;
             return parbuffer;
         }
         return parbuffer;

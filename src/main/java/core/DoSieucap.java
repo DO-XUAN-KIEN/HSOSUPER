@@ -51,16 +51,7 @@ public class DoSieucap {
                             Message m_send = new Message(-105);
                             m_send.writer().writeByte(4);
                             m_send.writer().writeByte(5);
-                            int[] values = {10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40};
-                            int tierStar = temp.tierStar >= 0 && temp.tierStar < values.length ? values[temp.tierStar] : temp.tierStar;
-                            for (int i = conn.p.TypeItemStarCreate * 5; i < conn.p.TypeItemStarCreate * 5 + 5; i++) {
-                                m_send.writer().writeShort(conn.p.NLdothan[i]); // id ở player
-                                if (conn.version >= 270) {
-                                    m_send.writer().writeShort(tierStar);
-                                } else {
-                                    m_send.writer().writeByte(tierStar);
-                                }
-                            }
+                            m_send.writer().writeShort(0);
                             conn.addmsg(m_send);
                             m_send.cleanup();
                         } else {
@@ -96,9 +87,6 @@ public class DoSieucap {
             e.printStackTrace();
         }
     }
-
-    public static short[] ti_le_nang_do = new short[]{1000, 800, 600, 500, 400, 300, 200, 100, 80, 70, 50, 30, 20, 1, 1};
-
     public static void Upgrade_dothan(Session conn, byte index) throws IOException { // nâng cấp tt
         try {
             int id = conn.p.id_Upgrade_Medal_Star;
@@ -114,100 +102,54 @@ public class DoSieucap {
                 Service.send_notice_box(conn, "Trang bị đã đạt cấp tối đa!");
                 return;
             }
-            int[] values = {10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40};
-            int tierStar = temp.tierStar >= 0 && temp.tierStar < values.length ? values[temp.tierStar] : temp.tierStar;
-            for (int i = conn.p.TypeItemStarCreate * 5; i < conn.p.TypeItemStarCreate * 5 + 5; i++) {
-                if (conn.p.item.total_item_by_id(7, conn.p.NLdothan[i]) < tierStar && conn.ac_admin < 20) {
-                    Service.send_notice_box(conn, "Thiếu " + ItemTemplate7.item.get(conn.p.NLdothan[i]).getName());
-                    return;
-                }
-            }
-            if (temp.tierStar >= ti_le_nang_do.length) {
-                Service.send_notice_box(conn, "Trang bị đã đạt cấp tối đa!");
+            if (conn.p.get_vang() < 10_000_000 || conn.p.get_ngoc() < 10_000 || conn.p.checkcoin() < 100_000){
+                Service.send_notice_box(conn,"Không đủ 10.000.000 vàng, 10.000 ngọc và 100.000 coin");
                 return;
+            } else {
+                conn.p.update_vang(-10_000_000);
+                conn.p.update_ngoc(-10_000);
+                conn.p.update_coin(-100_000);
             }
-            long vang_req = (temp.tierStar + 1) * 10_000_000;
-            int coin_req = (temp.tierStar + 1) * 20_000;
-            if (conn.p.get_vang() < vang_req){
-                Service.send_notice_box(conn,"Không đủ "+vang_req+ "vàng");
-                return;
-            }
-            if (conn.p.checkcoin()< coin_req){
-                Service.send_notice_box(conn,"Không đủ" + coin_req + "coin");
-                return;
-            }
-            conn.p.update_vang(-vang_req);
-            conn.p.update_coin(-coin_req);
+            conn.p.update_vang(-10_000_000);
+            conn.p.update_ngoc(-10_000);
+            conn.p.update_coin(-100_000);
             His_COIN hisc = new His_COIN(conn.user ,conn.p.name);
-            hisc.coin_change = coin_req;
+            hisc.coin_change = 100_000;
             hisc.coin_last = conn.p.checkcoin();
             hisc.Logger = "(TRỪ COIN) từ nâng do1";
             hisc.Flus();
-            //Log.gI().add_log(conn.p.name, "trừ "+coin_req+" coin từ nâng do1");
-            boolean suc;
-            if (temp.tierStar < 10) {
-                suc = Util.random(15111) < ti_le_nang_do[temp.tierStar] || (conn.ac_admin > 111 && Manager.BuffAdmin) || conn.p.mm_tt >= 70;
-            }else {
-                suc = Util.random(22222) < ti_le_nang_do[temp.tierStar] || (conn.ac_admin > 111 && Manager.BuffAdmin) || conn.p.mm_tt >= 100;
+            List<Option> ops = ItemStar.GetOpsItemStarUpgrade(temp.clazz, temp.type, temp.id, temp.tierStar + 1, temp.op);
+            if ((ops == null || ops.isEmpty()) && (temp.id >= 4831 && temp.id <= 4873)) {
+                Service.send_notice_box(conn, "Lỗi không tìm thấy chỉ số, hãy chụp lại chỉ số và báo ngay cho ad \"Nhắn riêng\"");
+                return;
             }
-            if (suc) {
-                List<Option> ops = ItemStar.GetOpsItemStarUpgrade(temp.clazz, temp.type, temp.id, temp.tierStar + 1, temp.op);
-                if ((ops == null || ops.isEmpty()) && (temp.id >= 4831 && temp.id <= 4873)) {
-                    Service.send_notice_box(conn, "Lỗi không tìm thấy chỉ số, hãy chụp lại chỉ số và báo ngay cho ad \"Nhắn riêng\"");
-                    return;
-                }
-                conn.p.mm_tt = 0;
-                temp.tierStar++;
-                temp.UpdateName();
-                conn.p.setnldothan();
-                for (int i = 0; i < temp.op.size(); i++) {
-                    Option op = temp.op.get(i);
-                    if (op.id >= 0 && op.id <= 99) {
-                        if (op.id >= 0 && op.id <= 7){
-                            op.setParam(op.getParam(1));
-                        } else if (op.id == 37 || op.id == 38) {
-                            op.setParam(3);
-                        } else {
-                            op.setParam(op.getParam(4));
-                        }
-                    }
-                    if (op != null && op.id >= -128 && op.id <= -80 || (op.id == 99)) {
-                        op.setParam(op.getParam(0) + 100);
+            temp.tierStar++;
+            temp.UpdateName();
+            conn.p.setnldothan();
+            for (int i = 0; i < temp.op.size(); i++) {
+                Option op = temp.op.get(i);
+                if (op.id >= 0 && op.id <= 99) {
+                    if (op.id >= 0 && op.id <= 7) {
+                        op.setParam(op.getParam(0)+ 50);
+                    } else if (op.id == 14 || op.id == 15){
+                        op.setParam(op.getParam(0)+1);
+                    } else if (op.id == 37 || op.id == 38) {
+                        op.setParam(3);
+                    } else {
+                        op.setParam(op.getParam(1));
                     }
                 }
-            } else {
-                if (index == 0) {
-                    for (Option o : temp.op) {
-                        if (o.id == (byte) 129) {
-                            o.param -= 100;
-                        }
-                    }
+                if (op != null && op.id >= -128 && op.id <= -80 || (op.id == 99)) {
+                    op.setParam(op.getParam(0) + 100);
                 }
-            }
-            // xóa nl
-            for (int i = conn.p.TypeItemStarCreate * 5; i < conn.p.TypeItemStarCreate * 5 + 5; i++) {
-                conn.p.item.remove(7, conn.p.NLdothan[i], tierStar);
-            }
-//            if (suc == true) {
-//                conn.p.item.remove(7, 471, 5);
-//            } else {
-//                conn.p.item.remove(7, 471, 2);
-//            }
-            if (suc && (temp.tierStar + 1) % 3 == 0) {
-                conn.p.ChangeNL_dothan(conn.p.TypeItemStarCreate);
             }
             conn.p.item.char_inventory(4);
             conn.p.item.char_inventory(7);
             conn.p.item.char_inventory(3);
             Message m = new Message(-105);
             m.writer().writeByte(3);
-            if (suc) {
-                m.writer().writeByte(3);
-                m.writer().writeUTF("Thành công!");
-            } else {
-                m.writer().writeByte(4);
-                m.writer().writeUTF("Thất bại!");
-            }
+            m.writer().writeByte(3);
+            m.writer().writeUTF("Thành công!");
             m.writer().writeByte(3);
             m.writer().writeUTF(temp.name);
             m.writer().writeByte(temp.clazz);
@@ -234,14 +176,8 @@ public class DoSieucap {
             if (temp.tierStar < 15) {
                 m = new Message(-105);
                 m.writer().writeByte(5);
-                if (suc) {
-                    m.writer().writeByte(3);
-                    m.writer().writeUTF("Thành công, xin chúc mừng :)");
-                } else {
-                    conn.p.mm_tt += 1;
-                    m.writer().writeByte(4);
-                    m.writer().writeUTF("Thất bại rồi :(");
-                }
+                m.writer().writeByte(3);
+                m.writer().writeUTF("Thành công, xin chúc mừng :)");
                 m.writer().writeShort(id);
                 conn.addmsg(m);
                 m.cleanup();
@@ -517,8 +453,8 @@ public class DoSieucap {
                         conn.p.setnltb2();
                         for (int i = 0; i < item.op.size(); i++) {
                             Option op = item.op.get(i);
-                            if (op.id >= 0 && op.id <= 7) {
-                                op.setParam(op.getParam(0) + 100);
+                            if (op.id >= 0 && op.id < 7) {
+                                op.setParam(op.getParam(0) + 150);
                             }else if (op.id >= 8 && op.id <= 13) {
                                 op.setParam((int) (op.getParam(0) * 1.005));
                             }else if (op.id >= 23 && op.id <= 26) {
@@ -602,16 +538,20 @@ public class DoSieucap {
                         return;
                     }
                     Item3 item = conn.p.item.bag3[id];
-                    if (item == null || item.tier < 15) {
-                        Service.send_notice_box(conn, "Trang bị + 15 trở Lên!");
+                    if (item.type == 15 || item.type == 7){
+                        Service.send_notice_box(conn,"Không thể cường hóa cánh và giáp");
                         return;
                     }
                     if(item.tier >= 100) {
                         Service.send_notice_box(conn,"Bạn đã nâng cấp trang bị tối đa");
                         return;
                     }
+                    if ((item.id >= 4656 && item.id <= 4675) && item.tierStar < 9){
+                        Service.send_notice_box(conn, "Phải nâng cấp lên cấp 9 đã");
+                        return;
+                    }
                     if (item != null) {
-                        if (item.type >= 0 && item.type <= 11 && item.tier >= 15) {
+                        if (item.type >= 0 && item.type <= 11) {
                             if (item.tier < 100) {
                                 Message m_send = new Message(-105);
                                 m_send.writer().writeByte(4);
@@ -637,29 +577,33 @@ public class DoSieucap {
                         return;
                     }
                     Item3 item = conn.p.item.bag3[id];
-                    if (item == null || item.tier < 15) {
-                        Service.send_notice_box(conn, "Trang bị + 15 trở Lên!");
-                        return;
-                    }
                     if(item.tier >= 100) {
                         Service.send_notice_box(conn,"Bạn đã nâng cấp trang bị tối đa");
+                        return;
+                    }
+                    if (item.type == 15 || item.type == 7){
+                        Service.send_notice_box(conn,"Không thể cường hóa cánh và giáp");
+                        return;
+                    }
+                    if ((item.id >= 4656 && item.id <= 4675) && item.tierStar < 9){
+                        Service.send_notice_box(conn, "Phải nâng cấp lên cấp 9 đã");
                         return;
                     }
                     long vang;
                     int ngoc;
                     int coin;
                     if (item.tier <= 15){
-                        vang = 100_000;
-                        ngoc = 100;
-                        coin = 1_000;
+                        vang = 100_000;//1tr5
+                        ngoc = 100;//1k5
+                        coin = 1_000;//15k
                     }else if (item.tier <= 30){
-                        vang = 1_000_000;
-                        ngoc = 1_000;
-                        coin = 10_000;
+                        vang = 1_000_000;//15tr
+                        ngoc = 1_000;//15k
+                        coin = 10_000;//150k
                     }else if (item.tier <= 50){
-                        vang = 10_000_000;
-                        ngoc = 10_000;
-                        coin = 100_000;
+                        vang = 10_000_000;// 300tr
+                        ngoc = 10_000;// 300k
+                        coin = 100_000;// 3tr
                     }else if (item.tier <= 80){
                         vang = 100_000_000;
                         ngoc = 100_000;
@@ -669,6 +613,7 @@ public class DoSieucap {
                         ngoc = 1_000_000;
                         coin = 10_000_000;
                     }
+
                     if (conn.p.get_vang() < vang || conn.p.get_ngoc() < ngoc || conn.p.checkcoin() < coin){
                         if (conn.p.get_vang() < vang){
                             Service.send_notice_box(conn, "Không đủ vàng");
@@ -688,7 +633,7 @@ public class DoSieucap {
                     hisc.coin_last = conn.p.checkcoin();
                     hisc.Logger = "(TRỪ COIN) từ nâng tb1";
                     hisc.Flus();
-                    if (item != null && (item.type >= 0 && item.type <= 11) && item.tier < 100 && item.tier >= 15) {
+                    if (item != null && (item.type >= 0 && item.type <= 11) && item.tier < 100) {
                         item.tier++;
                         item.color = 5;
                         item.islock = true;
@@ -696,12 +641,20 @@ public class DoSieucap {
                         for (int i = 0; i < item.op.size(); i++) {
                             Option op = item.op.get(i);
                             if (op.id >= 0 && op.id <= 99 && op.id != 37 && op.id != 38) {
-                                if (op.id >= 0 && op.id <= 7) {
-                                    op.setParam(op.getParam(0) + 100);
+                                if (op.id >= 0 && op.id < 7) {
+                                    op.setParam(op.getParam(0) + 300);
+                                }else if (op.id >= 7 && op.id <= 13) {
+                                    op.setParam((int) (op.getParam(0) * 1.005));
+                                }else if (op.id >= 23 && op.id <= 26) {
+                                    op.setParam(op.getParam(0)+1);
+                                }else if (op.id >= 27 && op.id <= 36) {
+                                    op.setParam((int) (op.getParam(0) * 1.002));
+                                } else if (op.id == 14 || op.id == 15){
+                                    op.setParam(op.getParam(0) + 1);
                                 } else if (!(op.id >= 33 && op.id <= 36)) {
-                                    op.setParam(op.getParam(1));
+                                    op.setParam(op.getParam(0)+ 10);
                                 } else {
-                                    op.setParam(op.getParam(1));
+                                    op.setParam(op.getParam(0));
                                 }
                             }
                         }

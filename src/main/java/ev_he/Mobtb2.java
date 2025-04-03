@@ -39,7 +39,7 @@ public class Mobtb2 {
                 Map map = maps[0];
                 for (int i = 0; i <= 20; i++) {// tạo 20 con mob random trên map
                     short index = (short) (30000 + mobTrees.size());
-                    System.out.println(index);
+                    //System.out.println(index);
                     Mob_tb2 plot = new Mob_tb2(map, index);
                     plot.nameOwner = "Hãy chọn ta";
                     plot.x = (short) (Util.random(map.mapW) * 24);
@@ -153,7 +153,7 @@ public class Mobtb2 {
             if(time - timeCreate > 1000 * 60 * 4 && !mobTrees.isEmpty()) {
                 ClearMob();
                 check = true;
-                System.out.println("Đã clear hết");
+                //System.out.println("Đã clear hết");
             }
             if(time - timeCreate > 1000 * 60 * 5) {
                 try (Connection connection = SQL.gI().getConnection(); Statement st = connection.createStatement()) {

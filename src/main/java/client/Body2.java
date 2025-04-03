@@ -13,6 +13,7 @@ import event_daily.ChiemThanhManager;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import map.Dungeon;
 import map.Map;
 import map.MapService;
 import template.EffTemplate;
@@ -30,6 +31,7 @@ import template.Horse;
 public class Body2 extends MainObject {
 
     private Player p;
+    private Dungeon dungeon;
 
     protected void SetPlayer(Player p) {
         if (this.p != null) {
@@ -232,6 +234,9 @@ public class Body2 extends MainObject {
             hpm *= 0.9;
             hp *= 0.9;
         }
+        if (p.get_EffDefault(-228) != null && p.hopde == true && p.squire != null){
+            hpm += p.squire.body.get_HpMax();
+        }
         return (int) (hpm * Manager.ratio_hp);
     }
 
@@ -272,6 +277,9 @@ public class Body2 extends MainObject {
         }
         if (p.map != null && p.map.mapsk == true) {
             mpm /= 2;
+        }
+        if (p.get_EffDefault(-228) != null && p.hopde == true && p.squire != null){
+            mpm += p.squire.body.get_MpMax();
         }
         return (int) mpm;
     }
@@ -319,7 +327,13 @@ public class Body2 extends MainObject {
         if (p.type_use_mount == Horse.TUAN_LOC && p.id_ngua == 100){
             pie += 2000;
         }
-        return (int) (pie / 2.1);
+        if (p.get_EffDefault(-228) != null && p.hopde == true && p.squire != null){
+            pie += p.squire.body.get_Pierce();
+        }
+        int cm = (int)(pie / 2.1);
+        if (cm > 6000)
+            cm = 6000;
+        return cm;
     }
     @Override
     public int get_PhanDame() {
@@ -347,7 +361,13 @@ public class Body2 extends MainObject {
         if (p.type_use_mount == Horse.TUAN_LOC && p.id_ngua == 100){
             param += 2000;
         }
-        return (int) (param / 2.1);
+        if (p.get_EffDefault(-228) != null && p.hopde == true && p.squire != null){
+            param += p.squire.body.get_PhanDame();
+        }
+        int cm = (int)(param / 2.1);
+        if (cm > 6000)
+            cm = 6000;
+        return cm;
     }
     @Override
     public int get_Miss(boolean giam_ne) {
@@ -374,7 +394,13 @@ public class Body2 extends MainObject {
         if (p.get_EffDefault(142) != null) {
             param *= 0;
         }
-        return (int) (param / 1.8);
+        if (p.get_EffDefault(-228) != null && p.hopde == true && p.squire != null){
+            param += p.squire.body.get_Miss(false);
+        }
+        int cm = (int)(param / 1.8);
+        if (cm > 6000)
+            cm = 6000;
+        return cm;
     }
     @Override
     public int get_Crit() {
@@ -406,7 +432,13 @@ public class Body2 extends MainObject {
         if (p.type_use_mount == Horse.TUAN_LOC && p.id_ngua == 100){
             crit += 2000;
         }
-        return (int) (crit / 2.1);
+        if (p.get_EffDefault(-228) != null && p.hopde == true && p.squire != null){
+            crit += p.squire.body.get_Crit();
+        }
+        int cm = (int)(crit / 2.1);
+        if (cm > 6000)
+            cm = 6000;
+        return cm;
     }
 
     public int get_skill_point(int i) {
@@ -472,6 +504,12 @@ public class Body2 extends MainObject {
         if (def < 0) {
             def = 0;
         }
+        if (p.get_EffDefault(-228) != null && p.hopde == true && p.squire != null){
+            def += p.squire.body.get_PercentDefBase();
+        }
+        if (def >= 1_000_000_000){
+            def = 1_000_000_000;
+        }
         return def;
     }
 
@@ -487,10 +525,6 @@ public class Body2 extends MainObject {
                 def += get_point(2) * 22;
                 break;
             }
-        }
-        def += ((def * (get_PercentDefBase() / 100)) / 100);
-        if (def >= 2_000_000_000L){
-            def = 2_000_000_000L;
         }
         EffTemplate ef = p.get_EffDefault(0);
         if (ef != null) {
@@ -508,6 +542,13 @@ public class Body2 extends MainObject {
         }
         if (p.get_EffDefault(140) != null) {
             def *= 0;
+        }
+        if (p.get_EffDefault(-228) != null && p.hopde == true && p.squire != null){
+            def += p.squire.body.get_DefBase();
+        }
+        def += ((def * (get_PercentDefBase() / 100)) / 100);
+        if (def >= 2_000_000_000L){
+            def = 2_000_000_000L;
         }
         return (int) (def * 0.8);
     }
@@ -564,6 +605,9 @@ public class Body2 extends MainObject {
                 percent += 3500;
             }
             //</editor-fold>
+            if (p.get_EffDefault(-228) != null && p.hopde == true && p.squire != null){
+                percent += p.squire.body.get_PercentDameProp(0);
+            }
             return percent;
         }
         int perct = 0;
@@ -672,12 +716,19 @@ public class Body2 extends MainObject {
             perct += 3500;
         }
         //</editor-fold>
+        if (p.get_EffDefault(-228) != null && p.hopde == true && p.squire != null){
+            perct += p.squire.body.get_PercentDameProp(type);
+        }
         return perct;
     }
 
     @Override
     public int get_DameBase() {
-        return get_param_view_in4(40);
+        int dame = get_param_view_in4(40);
+        if (dame >= 1_000_000_000){
+            dame = 999_999_999;
+        }
+        return dame;
     }
 
     @Override
@@ -698,6 +749,9 @@ public class Body2 extends MainObject {
                 dame *= 1.3;
             }
             dame += ((dame * (get_PercentDameProp(0) / 100)) / 100);
+            if (p.get_EffDefault(-228) != null && p.hopde == true && p.squire != null){
+                dame += p.squire.body.get_DameProp(0);
+            }
             if (dame > 2_000_000_000) {
                 dame = 2_000_000_000;
             }
@@ -738,6 +792,9 @@ public class Body2 extends MainObject {
             dprop *= 1.15;
         }
         dprop += ((dprop * (get_PercentDameProp(type) / 100)) / 100);
+        if (p.get_EffDefault(-228) != null && p.hopde == true && p.squire != null){
+            dprop += p.squire.body.get_DameProp(type);
+        }
         if (dprop > 2_000_000_000) {
             dprop = 2_000_000_000;
         }
@@ -913,10 +970,16 @@ public class Body2 extends MainObject {
                     MapService.enter(p.map, p);
                 }
             }
-            if(p.get_EffDefault(-130) == null){
-                p.update_HD(1);
-                p.add_EffDefault(-130,1,1000 * 60 * 60 * 1);
+            if (map.map_id == 137 && !Map.is_map_not_zone2(map.map_id) && !p.isSquire) {
+                EffTemplate ff = get_EffDefault(-226);
+                if (ff == null) {
+                    Map m = Map.get_map_by_id(1)[0];
+                    MapService.leave(map, p);
+                    p.map = m;
+                    MapService.enter(p.map, p);
+                }
             }
+
             if (p.pet_di_buon != null && p.pet_di_buon.id_map == p.map.map_id && p.map.zone_id == p.map.maxzone
                     && !p.pet_di_buon.item.isEmpty() && map.time_add_bot < System.currentTimeMillis()) {
                 Bot bot = new Bot(map.baseID--, p);

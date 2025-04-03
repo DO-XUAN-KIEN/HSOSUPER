@@ -262,7 +262,7 @@ public class Squire extends Player {
                 JSONArray js = (JSONArray) JSONValue.parse(jsar.get(i).toString());
                 Pet temp = new Pet();
                 temp.setup(js);
-                temp.update_grown(t_off);
+                //temp.update_grown(t_off);
                 if (temp.is_follow) {
                     pet_follow = temp.get_id();
                 }
@@ -345,7 +345,6 @@ public class Squire extends Player {
         if (!already_setup) {
             return;
         }
-
         try (Connection connection = SQL.gI().getConnection(); Statement ps = connection.createStatement()) {
             // Đệ tử
             if (!isOwner) {
@@ -359,7 +358,7 @@ public class Squire extends Player {
                 jsar.clear();
                 for (int i = 0; i < MainEff.size(); i++) {
                     EffTemplate temp = MainEff.get(i);
-                    if (temp.id != -126 && temp.id != -125 && temp.id != -127 && temp.id != -128 && temp.id != -129 && temp.id != -130 && !(temp.id >= -222 && temp.id <= -225)) {
+                    if (temp.id != -126 && temp.id != -125 && temp.id != -127 && temp.id != -128 && temp.id != -333 && !(temp.id >= -222 && temp.id <= -226)) {
                         continue;
                     }
                     JSONArray jsar21 = new JSONArray();
@@ -513,6 +512,7 @@ public class Squire extends Player {
                 if (connection != null) {
                     ps.close();
                 }
+
             }
         } catch (SQLException e) {
             e.printStackTrace();

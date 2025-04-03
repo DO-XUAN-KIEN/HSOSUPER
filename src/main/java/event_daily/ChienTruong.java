@@ -96,8 +96,8 @@ public class ChienTruong {
         if (this.status == 1) {
             Manager.gI().chatKTGprocess("Chiến trường bắt đầu , cố gắng lấy nhiều nguyên liệu, điểm nhất nào");
             this.BXH.clear();
-            this.status = 2;
             this.time = 60 * 60;
+            this.status = 2;
             int init_house = this.list.size() / 40;
             init_house = init_house > 0 ? init_house : 10;
             this.info_house = new int[] {init_house, init_house, init_house, init_house
@@ -337,7 +337,6 @@ public class ChienTruong {
     }
 
     public synchronized void register(Player p) throws IOException {
-
         if (this.list.containsKey(p.name)) {
             Member_ChienTruong info = ChienTruong.gI().get_infor_register(p.name);
             p.time_use_item_arena = System.currentTimeMillis() + 250_000;
@@ -539,7 +538,7 @@ public class ChienTruong {
             switch (mob.template.mob_id) {
                 case 93, 94, 95, 96, 97, 98, 99, 100: {
                     if(Util.random(100)>70){
-                        id_item_leave4 =new short[]{(short) Util.random(359, 363)};
+                        id_item_leave4 =new short[]{(short) Util.random(359, 364)};
                     }
                     if (Manager.gI().event == 11){
                         if (Util.random(100) < 5){
@@ -551,7 +550,7 @@ public class ChienTruong {
                     break;
                 }
                 case 89,90,91,92: {
-                    id_item_leave4 =new short[]{(short) Util.random(359, 363)};
+                    id_item_leave4 =new short[]{(short) Util.random(359, 365)};
                     if (Manager.gI().event == 11){
                         id_item_leave4 = new short[]{337};
                     }

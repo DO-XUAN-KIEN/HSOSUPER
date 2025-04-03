@@ -1,5 +1,6 @@
 package map;
 
+import BossHDL.BossManager;
 import ai.Bot;
 import ai.MobAi;
 import ai.NhanBan;
@@ -28,16 +29,7 @@ import java.io.DataInputStream;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import template.Item3;
-import template.Item47;
-import template.ItemTemplate3;
-import template.ItemTemplate4;
-import template.ItemTemplate7;
-import template.MainObject;
-import template.Mob_MoTaiNguyen;
-import template.NpcTemplate;
-import template.Option_pet;
-import template.StrucEff;
+import template.*;
 
 public class Map implements Runnable {
 
@@ -234,7 +226,7 @@ public class Map implements Runnable {
     }
     public static boolean is_map_di_buon(short id) {
         return id == 7 || id == 8 || id == 15 || id == 16 || id == 17 || id == 18 || id == 20 || id == 22 || id == 23 || id == 24
-                || id == 25 || id == 33 || id == 34 || id == 42 || id == 44 || id == 45 || id == 52;
+                || id == 42 || id == 43 || id == 44 || id == 45 || id == 52;
     }
 
     public boolean isMapLoiDai() {
@@ -402,7 +394,9 @@ public class Map implements Runnable {
             }
         }
     }
-
+    public static void goibosstg(){
+        BossManager.callBossToMap(7, 217, 600, 312, 1_000_000_000, 111);
+    }
     private void update() {
         try {
             long _timec = System.currentTimeMillis();
@@ -419,8 +413,8 @@ public class Map implements Runnable {
             for (int i1 = players.size() - 1; i1 >= 0; i1--) {
                 try {
                     Player p = players.get(i1);
-                    Service.send_char_main_in4(p);
-                    MapService.update_in4_2_other_inside(p.map, p);
+////                    Service.send_char_main_in4(p);
+//                    MapService.update_in4_2_other_inside(p.map, p);
                     if (p == null || p.conn == null || p.conn.socket == null || p.conn.socket.isClosed() || !p.conn.connected) {
                         players.remove(p);
                         if (p != null && p.conn != null) {
@@ -452,6 +446,21 @@ public class Map implements Runnable {
                     }
                     if (p.isDie && kingCupMap != null && p.time_die + 3000L > System.currentTimeMillis()) {
                         kingCupMap.refresh();
+                    }
+                    if (p.get_EffDefault(-227) == null && p.map48 == false){
+                        p.map48 = true;
+                        d.state = 5;
+                    }
+                    if (p.get_EffDefault(-228) == null && p.hopde == true){
+                        p.hopde = false;
+                        p.fashion = Part_fashion.get_part(p);
+                        Squire.callSquire(p.conn);
+                        Service.send_char_main_in4(p);
+                    }
+                    if(p.get_EffDefault(-333) == null && p.isOwner && !p.isSquire){
+                        Service.send_notice_nobox_white(p.conn, "+1 điểm HĐ");
+                        p.update_HD(1);
+                        p.add_EffDefault(-333,1,1000 * 60 * 60 * 1);
                     }
                     if (this.map_id == 136) {
                         if(p.get_EffDefault(-129) == null){
@@ -576,6 +585,13 @@ public class Map implements Runnable {
                         }
                         // auto trừ hp, mp khi dính bỏng lửa, bỏng lạnh
                         // eff medal
+                        if (p.get_EffDefault(-228) != null){
+                            if (p.clazz == 0 || p.clazz == 1){
+                                p.Sen_eff_111(p, (byte) 126);
+                            }else {
+                                p.Sen_eff_111(p, (byte) 127);
+                            }
+                        }
                         Item3 it = p.item.wear[12];
                         if (it != null && it.tier >= 3 && p.time_eff_medal < System.currentTimeMillis()) {
                             p.time_eff_medal = System.currentTimeMillis() + 5_000L;
@@ -587,17 +603,17 @@ public class Map implements Runnable {
                             switch (it.id) {
                                 case 4588: {
                                     byte eff_ = 0;
-                                    if(it.tier > 15) {
+                                    if(it.tier >= 95) {
                                         eff_ = 65;
-                                    }else if (it.tier == 15) {
+                                    }else if (it.tier >= 75) {
                                         eff_ = 26;
-                                    } else if (it.tier >= 12) {
+                                    } else if (it.tier >= 55) {
                                         eff_ = 25;
-                                    } else if (it.tier >= 9) {
+                                    } else if (it.tier >= 35) {
                                         eff_ = 2;
-                                    } else if (it.tier >= 6) {
+                                    } else if (it.tier >= 15) {
                                         eff_ = 1;
-                                    } else if (it.tier >= 3) {
+                                    } else if (it.tier >= 5) {
                                         eff_ = 0;
                                     }
                                     m.writer().writeByte(eff_);
@@ -605,17 +621,17 @@ public class Map implements Runnable {
                                 }
                                 case 4589: {
                                     byte eff_ = 9;
-                                    if(it.tier > 15) {
+                                    if(it.tier >= 95) {
                                         eff_ = 64;
-                                    }else if (it.tier == 15) {
+                                    }else if (it.tier >= 75) {
                                         eff_ = 28;
-                                    } else if (it.tier >= 12) {
+                                    } else if (it.tier >= 55) {
                                         eff_ = 27;
-                                    } else if (it.tier >= 9) {
+                                    } else if (it.tier >= 35) {
                                         eff_ = 11;
-                                    } else if (it.tier >= 6) {
+                                    } else if (it.tier >= 15) {
                                         eff_ = 10;
-                                    } else if (it.tier >= 3) {
+                                    } else if (it.tier >= 5) {
                                         eff_ = 9;
                                     }
                                     m.writer().writeByte(eff_);
@@ -623,17 +639,17 @@ public class Map implements Runnable {
                                 }
                                 case 4590: {
                                     byte eff_ = 6;
-                                    if(it.tier > 15) {
-                                        eff_ = 60;
-                                    }else if (it.tier == 15) {
+                                    if(it.tier >= 95) {
+                                        eff_ = 66;
+                                    }else if (it.tier >= 75) {
                                         eff_ = 32;
-                                    } else if (it.tier >= 12) {
+                                    } else if (it.tier >= 55) {
                                         eff_ = 31;
-                                    } else if (it.tier >= 9) {
+                                    } else if (it.tier >= 35) {
                                         eff_ = 8;
-                                    } else if (it.tier >= 6) {
+                                    } else if (it.tier >= 15) {
                                         eff_ = 7;
-                                    } else if (it.tier >= 3) {
+                                    } else if (it.tier >= 5) {
                                         eff_ = 6;
                                     }
                                     m.writer().writeByte(eff_);
@@ -641,17 +657,17 @@ public class Map implements Runnable {
                                 }
                                 default: { // 4587
                                     byte eff_ = 3;
-                                    if(it.tier > 15) {
+                                    if(it.tier > 95) {
                                         eff_ = 63;
-                                    }else if (it.tier == 15) {
+                                    }else if (it.tier >= 75) {
                                         eff_ = 78;
-                                    } else if (it.tier >= 12) {
+                                    } else if (it.tier >= 55) {
                                         eff_ = 30;
-                                    } else if (it.tier >= 9) {
+                                    } else if (it.tier >= 35) {
                                         eff_ = 5;
-                                    } else if (it.tier >= 6) {
+                                    } else if (it.tier >= 15) {
                                         eff_ = 4;
-                                    } else if (it.tier >= 3) {
+                                    } else if (it.tier >= 5) {
                                         eff_ = 3;
                                     }
                                     m.writer().writeByte(eff_);
@@ -819,7 +835,7 @@ public class Map implements Runnable {
         }else if (Manager.gI().event == 8 && this.map_id == 1){
             path = "data/npc/event1/";
             Service.send_msg_data(p.conn, -49, "event1_1");
-        } else if (Manager.gI().event == 3 && this.map_id == 1) {
+        } else if (Manager.gI().event == 4 && this.map_id == 1) {
             path = "data/npc/event4/";
             Service.eff_map(this, p, -65, 60, 648, 360, 4, 2, 95);
             Service.eff_map(this, p, -64, 59, 408, 360, 4, 2, 95);
@@ -909,6 +925,25 @@ public class Map implements Runnable {
             npc.y = 432;
             p.npcs.add(npc);
         }
+        if (this.map_id == 20) {
+            m = new Message(-50);
+            m.writer().writeByte(1);
+            m.writer().writeUTF("Mr Graham");
+            m.writer().writeUTF("Mua bán");
+            m.writer().writeByte(-58);
+            m.writer().writeByte(35);
+            m.writer().writeShort(672);
+            m.writer().writeShort(1144);
+            m.writer().writeByte(1);
+            m.writer().writeByte(1);
+            m.writer().writeByte(2);
+            m.writer().writeByte(27);
+            m.writer().writeUTF("Mua với giá cao, mịa zô mịa zô");
+            m.writer().writeByte(1);
+            m.writer().writeByte(0);
+            p.conn.addmsg(m);
+            m.cleanup();
+        }
         if (this.map_id == 1 && p.conn.ac_admin > 120) {
             m = new Message(-50);
             m.writer().writeByte(1);
@@ -934,7 +969,7 @@ public class Map implements Runnable {
             m.writer().writeUTF("Ms Super");
             m.writer().writeUTF("Giao Tiếp");
             m.writer().writeByte(-99);// id npc
-            m.writer().writeByte(56);   // icon
+            m.writer().writeByte(57);   // icon
             if (Manager.gI().event == 8){
                 m.writer().writeShort(598); // x
                 m.writer().writeShort(246); // y
@@ -945,7 +980,7 @@ public class Map implements Runnable {
             m.writer().writeByte(1);
             m.writer().writeByte(1);
             m.writer().writeByte(2);
-            m.writer().writeByte(48); // icon 2
+            m.writer().writeByte(49); // icon 2
             m.writer().writeUTF("Tăng dame đẳng cấp");
             m.writer().writeByte(1);
             m.writer().writeByte(0);
@@ -958,18 +993,13 @@ public class Map implements Runnable {
             m.writer().writeUTF("Vua Đỏ Đen");
             m.writer().writeUTF("Giao Tiếp");
             m.writer().writeByte(-98);// id npc
-            m.writer().writeByte(56);   // icon
-            if (Manager.gI().event == 8){
-                m.writer().writeShort(444); // x
-                m.writer().writeShort(222); // y
-            }else {
-                m.writer().writeShort(444); // x
-                m.writer().writeShort(222); // y
-            }
+            m.writer().writeByte(58);   // icon
+            m.writer().writeShort(754); // x
+            m.writer().writeShort(315); // y
             m.writer().writeByte(1);
             m.writer().writeByte(1);
             m.writer().writeByte(2);
-            m.writer().writeByte(48); // icon 2
+            m.writer().writeByte(50); // icon 2
             m.writer().writeUTF("Vận may của ngươi đến đâu");
             m.writer().writeByte(1);
             m.writer().writeByte(0);
@@ -1455,7 +1485,7 @@ public class Map implements Runnable {
 
     public static boolean is_map_cant_save_site(short id) {
         return id == 48 || id == 88 || id == 89 || id == 90 || id == 91 || id == 82 || id == 102 || id == 100 || (id >= 83 && id <= 87) || (id >= 53 && id <= 61)
-                || Map.is_map_chien_truong(id) || id == 46 || id == 125 || id == 127 || id == 129 || id == 132 || id == 135 || id == 49;
+                || Map.is_map_chien_truong(id) || id == 46 || id == 125 || id == 127 || id == 129 || id == 132 || id == 135 || id == 49 || id == 136 || id == 137;
     }
     public static boolean is_map_not_zone2(short id) {
         return id == 48 || id == 88 || id == 89 || id == 90 || id == 91 || id == 82 || id == 102 || id == 100

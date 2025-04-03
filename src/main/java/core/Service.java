@@ -167,13 +167,13 @@ public class Service {
         ///
         m.writer().writeShort(p.level); // lv
         m.writer().writeShort(p.getlevelpercent()); // lv percent
-        m.writer().writeShort(p.tiemnang); // tiem nang
-        m.writer().writeShort(p.kynang); // ky nang
+        m.writer().writeShort((int) p.tiemnang); // tiem nang
+        m.writer().writeShort((int) p.kynang); // ky nang
         ///
-        m.writer().writeShort(p.point1); // tiem nang goc
-        m.writer().writeShort(p.point2);
-        m.writer().writeShort(p.point3);
-        m.writer().writeShort(p.point4);
+        m.writer().writeShort((int) p.point1); // tiem nang goc
+        m.writer().writeShort((int) p.point2);
+        m.writer().writeShort((int) p.point3);
+        m.writer().writeShort((int) p.point4);
         ///
         m.writer().writeShort(p.body.get_plus_point(23)); // tiem nang them
         m.writer().writeShort(p.body.get_plus_point(24));
@@ -207,9 +207,12 @@ public class Service {
         } else {
             m.writer().writeShort(-1); // clan
         }
-        m.writer().writeUTF("Vĩnh lỏh-Khu 2: ");
-        if (p.get_EffDefault(-127) != null) {
+        m.writer().writeUTF("Vĩnh lỏh: ");
+        if (p.get_EffDefault(-127) != null && p.map.zone_id == 1) {
             long time = p.get_EffDefault(-127).time;
+            m.writer().writeLong(time);
+        }else if (p.get_EffDefault(-228) != null){
+            long time = p.get_EffDefault(-228).time;
             m.writer().writeLong(time);
         } else {
             m.writer().writeLong(0);
@@ -1013,6 +1016,8 @@ public class Service {
                     m.writer().writeUTF("Tiến hóa đồ tinh tú[VIP PRO]");
                 } else if (conn.p.ismdthan) {
                     m.writer().writeUTF("Tiến hóa mề đay");
+                } else if (conn.p.istb1) {
+                    m.writer().writeUTF("Cường hóa trang bị 1");
                 } else if (conn.p.istb2) {
                     m.writer().writeUTF("Cường hóa trang bị 2");
                 } else {
@@ -1143,16 +1148,13 @@ public class Service {
                 m.writer().writeShort(0);
                 break;
             }
-            case 25:
-            case 26:
-            case 27:
             case 28: {
                 m.writer().writeUTF("Tạo mề đay");
                 m.writer().writeByte(19);
                 m.writer().writeShort(0);
                 m.writer().writeByte(5);
                 //
-                m.writer().writeShort(conn.p.medal_create_material[5 * (type - 25)]);
+                m.writer().writeShort(conn.p.medal_create_material[4 + 5 * (type - 25)]);
                 if (conn.version >= 270) {
                     m.writer().writeShort(1);
                 } else {
@@ -1970,7 +1972,7 @@ public class Service {
                             itbag.part = ItemTemplate3.item.get(idbuy).getPart();
                             itbag.islock = true;
                             itbag.name = ItemTemplate3.item.get(idbuy).getName();
-                            itbag.tier = 15;
+                            itbag.tier = 0;
                             itbag.op = new ArrayList<>();
                             itbag.op.addAll(itsell3.op);
                             itbag.time_use = 0;
@@ -2103,7 +2105,7 @@ public class Service {
                                     itbag.part = ItemTemplate3.item.get(idbuy).getPart();
                                     itbag.islock = true;
                                     itbag.name = ItemTemplate3.item.get(idbuy).getName();
-                                    itbag.tier = 15;
+                                    itbag.tier = 0;
                                     itbag.op = new ArrayList<>();
                                     for (int i = 0; i < itemshoptt.op.size(); i++) {
                                         itbag.op.add(new Option(itemshoptt.op.get(i).id, itemshoptt.op.get(i).getParam(0)));

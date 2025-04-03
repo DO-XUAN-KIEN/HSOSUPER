@@ -39,10 +39,10 @@ public class Wedding {
 		temp.it.tier = 0;
 		temp.it.islock = true;
 		temp.it.op = new ArrayList<>();
-		int[] dame = new int[] {150, 200, 550, 1000}; // sát thương
-		int[] dame_per = new int[] {500, 700, 1000, 1500}; // st %
-		int[] point = new int[] {100, 200, 300, 200}; // điểm tiềm năng
-		int[] resis = new int[] {500, 700, 1000, 1000}; // kháng
+		int[] dame = new int[] {150, 200, 200, 200}; // sát thương
+		int[] dame_per = new int[] {500, 700, 700, 700}; // st %
+		int[] point = new int[] {100, 200, 200, 200}; // điểm tiềm năng
+		int[] resis = new int[] {500, 700, 200, 500}; // kháng
 		for (int i = 0; i < 5; i++) {
 			temp.it.op.add(new Option(i,dame[temp.it.color]));
 		}

@@ -148,7 +148,7 @@ public class Mob_in_map extends MainObject {
                 p.danhvong += 1;
                 p.item.char_inventory(5);
                 if (mainAtk.isPlayer()) {
-                    if ((Math.abs(mob.level - mainAtk.level) <= 10 || map.map_id == 136 || map.map_id == 137) && !check_mob_roi_ngoc_kham) {
+                    if (((Math.abs(mob.level - mainAtk.level) <= 10 || mob.level > 130) || map.map_id == 136 || map.map_id == 137) && !check_mob_roi_ngoc_kham) {
                         if (map.isMapLangPhuSuong()) {
                             int percent = 20;
                             if (percent > Util.random(0, 300)) {
@@ -162,7 +162,7 @@ public class Mob_in_map extends MainObject {
                             } else if (percent > Util.random(0, 100)) {
                                 LeaveItemMap.leave_item_by_type7(map, (short) Util.random(0, 2), p, mob.index);
                             }
-                            if (Manager.gI().event != -1 && 30 > Util.random(0, 100) && Math.abs(mob.level - mainAtk.level) <= 5) {
+                            if (Manager.gI().event != -1 && 10 > Util.random(0, 100) && Math.abs(mob.level - mainAtk.level) <= 5) {
                                 LeaveItemMap.leave_item_event(map, mob, (Player) mainAtk);
                             }
                         } else {
@@ -189,7 +189,7 @@ public class Mob_in_map extends MainObject {
                                 if (Util.random(0, 10) < 2) {
                                     LeaveItemMap.leave_item_by_type7(map, (short) 13, p, mob.index);
                                 }
-                                if (Util.random(0,100) < 5){
+                                if (Util.random(0,100) < 20){
                                     LeaveItemMap.leave_item_by_type4(map,(short) 364,p,mob.index);
                                 }
                                 if (Manager.gI().event == 11){
@@ -207,10 +207,15 @@ public class Mob_in_map extends MainObject {
                             if (percent + 10 > Util.random(0, 300)) {
                                 LeaveItemMap.leave_vang(map, mob, (Player) mainAtk);
                             }
+                            if (map.map_id == 137){
+                                if (10 > Util.random(10000)){
+                                    p.update_coin(2000);
+                                }
+                            }
 //                            if (percent + 10 > Util.random(0, 300)) {
 //                                LeaveItemMap.leave_material(map, mob, (Player) mainAtk);
 //                            }
-                            if (Manager.gI().event != 0 && 30 > Util.random(0, 100) && Math.abs(mob.level - mainAtk.level) <= 5) {
+                            if (Manager.gI().event != 0 && 20 > Util.random(0, 100)) {
                                 LeaveItemMap.leave_item_event(map, mob, (Player) mainAtk);
                             }
                         }

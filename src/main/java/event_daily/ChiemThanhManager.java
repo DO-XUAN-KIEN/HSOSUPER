@@ -531,7 +531,7 @@ public class ChiemThanhManager {
                 Manager.ClanThue.update_vang(500_000_000);
                 Manager.ClanThue.update_ngoc(30_000);
                 System.out.println("Bang " +Manager.ClanThue+ "nhận đc vàng và ngọc");
-                Manager.gI().chatKTGprocess("Chúc mừng bang " + NameClan + " nhận được 500m vàng and 10k ngọc");
+                Manager.gI().chatKTGprocess("Chúc mừng bang " + NameClan + " nhận được 500tr vàng and 10k ngọc");
             }
         }
         catch(IOException e){}

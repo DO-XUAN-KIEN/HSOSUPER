@@ -53,7 +53,7 @@ public class Mobkhu2 {
                     short index = (short) (30000 + mobTrees.size());
                     Mob_khu2 plot = new Mob_khu2(m, index);
                     mobTrees.add(plot);
-                    System.out.println("Spawn Mob tại map111: " + m.name);
+                    //System.out.println("Spawn Mob tại map111: " + m.name);
                 }
             }
             Manager.gI().chatKTGprocess("Ông già Noel đã xuất hiện, hãy nhanh chân lên nào!");

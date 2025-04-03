@@ -20,18 +20,11 @@ import map.Map;
 public class BossManager {
     public static final CopyOnWriteArrayList<Mob_in_map> entrys = new CopyOnWriteArrayList<>();
     public static Map map;
-    public static byte random(){
-        List<Integer> excludedNumbers = Arrays.asList(1, 17, 33, 34, 35);
-        int ran;
-        do {
-            ran = Util.nextInt(46);
-        } while (excludedNumbers.contains(ran));
-        return (byte) ran;
-    }
 
     public static byte GetIdMap(int idboss){
         switch (idboss) {
             //case = mod - Return = map
+            case 218: return 0;
             case 103: return  7;
             case 104: return 15;
             case 101: return 25;
@@ -63,6 +56,7 @@ public class BossManager {
     private static short[] GetSite(int idboss){
         switch (idboss) {
             //mod + vị trí
+            case 218: return new short[]{240, 400};
             case 103: return  new short[]{432,512};
             case 104: return new short[]{ 530,213};
             case 101: return new short[]{ 204,284};
@@ -94,7 +88,7 @@ public class BossManager {
     }
     public static void init(){
         int idx = 10_000;
-        int[] ids = new int[]{101 , 84 , 83 ,103 ,104 ,105 , 106, 149 , 155, 174, 173, 195, 196, 197, 186, 187, 188, 178, 190, 23, 51, 52, 53, 79};
+        int[] ids = new int[]{101 , 84 , 83 ,103 ,104 ,105 , 106, 149 , 155, 174, 173, 195, 196, 197, 186, 187, 188, 178, 190, 23, 51, 52, 53, 79, 218};
         for(int id : ids){
             for(int i=0; i<5;i++){
 //                if(id == 174){
@@ -119,6 +113,8 @@ public class BossManager {
                 temp.hp = temp.Set_hpMax(id == 178? (600_000_000 + (i*200_000_000)) : m.hpmax );
                 if(id == 178)
                     temp.timeBossRecive = 1000 * 60 * 60 * 6;
+                else if (id == 218)
+                    temp.timeBossRecive = 1000 * 60 * 5;
                 else
                     temp.timeBossRecive = 1000 * 60 * 60 * 8;
                 temp.map_id = GetIdMap(id);

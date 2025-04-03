@@ -1,10 +1,10 @@
 package core;
 
-import BossHDL.BossTG;
 import Helps._Time;
 import ev_he.Mobkhu2;
 import ev_he.Mobngoc;
 import ev_he.Mobtb2;
+import event.EventManager;
 import event.Event_1;
 import event.NauKeo;
 import java.io.IOException;
@@ -30,7 +30,6 @@ public class ServerManager implements Runnable {
     private final long time;
     public long time_l;
     private long time2;
-    public BossTG bossTG;
     private byte checkError;
     private static final int HOUR_START_KING_CUP = 18;
     private static final int MIN_START_KING_CUP = 30;
@@ -239,7 +238,7 @@ public class ServerManager implements Runnable {
                     //
                     checkError = 2;
                     if (min % 5 == 0 && sec == 0) {
-                        Manager.gI().chatKTGprocess("Bạn Đang Chơi Server" + " Hiệp Sĩ Mango " + "Chúc Bạn Chơi Game Vui Vẻ.");
+                        Manager.gI().chatKTGprocess("Bạn Đang Chơi Server" + " Hiệp Sĩ Super " + "Chúc Bạn Chơi Game Vui Vẻ.");
                     }
 //                    checkError = 5;
                     if (min % 4 == 0 && sec == 0) {
@@ -304,18 +303,32 @@ public class ServerManager implements Runnable {
                             Event_1.sort_bxh();
                         }
                     }
+                    if (Manager.gI().event == 4) {
+                        if (EventManager.eventManager == null) {
+                            EventManager.eventManager = new EventManager();
+                        }
+                        if (hour == 17 && min == 00 && sec == 00) {
+                            EventManager.eventManager.start();
+                        }
+                        if (sec == 0 && min % 1 == 0) {
+                            EventManager.update(1);
+                        }
+                    }
                     if (DayOfWeek % 2 !=0 && hour == 21 && min == 0 && sec == 0) {
                         ChienTruong.gI().open_register();
-                        Manager.gI().chatKTGprocess("Chiến Trường Đã Bắt Đầu Nhanh Tay Lẹ Chân Lên");
+                        //Manager.gI().chatKTGprocess("Chiến Trường Đã Bắt Đầu Nhanh Tay Lẹ Chân Lên");
                     }
                     if (hour == 17 && min == 0 && sec == 0){
                         MapKiemMoney.gI().open_register();
                     }
-                    if (hour >= 6 && hour <= 8) {
-                        if (hour == 6 && min == 10 && sec == 0) {
+                    if (hour == 12 && min == 0 && sec == 0){
+                        Map.goibosstg();
+                    }
+                    if (hour >= 18 && hour < 20) {
+                        if (hour == 18 && min == 10 && sec == 0) {
                             Mobngoc.runing = true;
                             Manager.gI().chatKTGprocess("Map kiếm ngọc khảm đã mở nhanh chân đến NPC super để tham gia");
-                        }else if (hour == 7 && min == 0 && sec == 0){
+                        }else if (hour == 19 && min == 0 && sec == 0){
                             Manager.gI().chatKTGprocess("Map kiếm ngọc khảm đã mở đóng");
                             Mobngoc.runing = false;
                         }
@@ -369,11 +382,6 @@ public class ServerManager implements Runnable {
                     }
                     if (Manager.gI().event == 8) {
                         ev_he.Event_8.Update();
-                        if (sec == 1 && min == 0 && hour == 19){
-                            Manager.gI().bossTG.refresh();
-                        }else if (sec == 0 && min == 30 && hour == 19){
-                            Manager.gI().bossTG.finish();
-                        }
                         if (min % 5 == 0 && sec == 0) {
                             ev_he.Event_8.sort_bxh();
                         }

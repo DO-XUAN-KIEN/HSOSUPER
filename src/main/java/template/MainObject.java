@@ -731,9 +731,9 @@ public class MainObject {
                     if (focus.kham.idAtk_KH == ObjAtk.index) {
                         focus.kham.CountAtk_KH++;
                     } else {
-                        focus.kham.idAtk_KH = ObjAtk.index;
                         focus.kham.CountAtk_KH = 1;
                     }
+                        focus.kham.idAtk_KH = ObjAtk.index;
 
                     if (focus.kham.CountAtk_KH >= prKham) {
                         focus.kham.idAtk_KH = 0;
@@ -822,16 +822,16 @@ public class MainObject {
                         dame = 1;
                     }
                 }
-                boolean check = (dame < 0
-                        || (focus.isBoss() && Math.abs(focus.level - ObjAtk.level) >= 5 && focus.level < 139 && focus.template.mob_id != 190
-                        && focus.template.mob_id != 178 && focus.template.mob_id != 23 && focus.template.mob_id != 51 && focus.template.mob_id != 52
-                        && focus.template.mob_id != 53 && focus.template.mob_id != 79 && !Map.is_map_cant_save_site(focus.map_id))
-                        || (focus.isBoss() && focus.template.mob_id == 178 && map.zone_id == 0 && ObjAtk.level > 89)
-                        || (focus.isBoss() && focus.template.mob_id == 178 && map.zone_id == 2 && !(ObjAtk.level >= 90 && ObjAtk.level < 110))
-                        || (focus.isBoss() && focus.template.mob_id == 178 && map.zone_id == 3 && ObjAtk.level < 110)) && !(map.ismapkogioihan());
-                if (check) {
-                    dame = 0;
-                }
+//                boolean check = (dame < 0
+//                        || (focus.isBoss() && Math.abs(focus.level - ObjAtk.level) >= 5 && focus.level < 120 && focus.template.mob_id != 190
+//                        && focus.template.mob_id != 178 && focus.template.mob_id != 23 && focus.template.mob_id != 51 && focus.template.mob_id != 52
+//                        && focus.template.mob_id != 53 && focus.template.mob_id != 79 && focus.template.mob_id != 217 && focus.template.mob_id != 218 && !Map.is_map_cant_save_site(focus.map_id))
+//                        || (focus.isBoss() && focus.template.mob_id == 178 && map.zone_id == 0 && ObjAtk.level > 89)
+//                        || (focus.isBoss() && focus.template.mob_id == 178 && map.zone_id == 2 && !(ObjAtk.level >= 90 && ObjAtk.level < 110))
+//                        || (focus.isBoss() && focus.template.mob_id == 178 && map.zone_id == 3 && ObjAtk.level < 110)) && !(map.ismapkogioihan());
+//                if (check) {
+//                    dame = 0;
+//                }
             }
             if (focus.isMoTaiNguyen() && ObjAtk.isPlayer()) {
                 Mob_MoTaiNguyen mo = (Mob_MoTaiNguyen) focus;
@@ -841,12 +841,6 @@ public class MainObject {
                     mo.nhanban.p_target = (Player) ObjAtk;
                     mo.nhanban.is_move = false;
                 }
-            }
-            if (Manager.gI().bossTG.p.equals(focus)) {
-                Manager.gI().bossTG.update_dame(p.name, dame);
-//                if (Manager.gI().bossTG.p.hp < Manager.gI().bossTG.p.get_HpMax() / 2) {
-//                    Service.usepotion(Manager.gI().bossTG.p, 0, Manager.gI().bossTG.p.get_HpMax());
-//                }
             }
             if (ObjAtk.isPlayer() && HoiHP > 0) {
                 Service.usepotion(p, 0, HoiHP);
@@ -1214,7 +1208,11 @@ public class MainObject {
                 p_focus.add_EffDefault(142,1,10 * 1000);
                 Service.send_notice_nobox_white(p_focus.conn, "Câm lặng");
             }
-            focus.hp -= (dame + dame_spec);
+            if (p != null && focus.isPlayer()) {
+                focus.hp -= ((dame + dame_spec) / 10);
+            }else {
+                focus.hp -= (dame + dame_spec);
+            }
             if (focus.isBoss() && mob != null && ObjAtk.isPlayer()) {
                 if (!mob.top_dame.containsKey(p.name)) {
                     mob.top_dame.put(p.name, dame);
@@ -1348,11 +1346,13 @@ public class MainObject {
                     expup = (expup * 6) / 10;
                 } else if (Math.abs(p.level - focus.level) > 5) {
                     expup = (expup * 5) / 10;
+                } else if (p.level >= 139){
+                    expup = (expup * 5) / 10;
                 }
                 if (p.hieuchien > 0) {
                     expup /= 2;
                 }
-                if (Math.abs(focus.level - p.level) <= 10 && expup > 0) {
+                if (((p.level >= 139 && (map.map_id >= 96 && map.map_id <= 98)) ||Math.abs(focus.level - p.level) <= 10) && expup > 0) {
                     if (p.party != null) {
                         for (int i = 0; i < p.party.get_mems().size(); i++) {
                             Player pm = p.party.get_mems().get(i);
@@ -1390,17 +1390,8 @@ public class MainObject {
                     }
                     p.myclan.update_exp(exp_clan);
                 }
-
-                if (p.it_wedding != null) {
-                    if (p.party != null && p.party.get_mems() != null) {
-                        for (int i = 0; i < p.party.get_mems().size(); i++) {
-                            Player pm = p.party.get_mems().get(i);
-                            if (p.it_wedding.equals(pm.it_wedding)) {
-                                p.it_wedding.exp += dame / 1_000;
-                                break;
-                            }
-                        }
-                    }
+                if (map.map_id == 137) {
+                    p.it_wedding.exp += dame / 1_000;
                 }
             }
             //</editor-fold>    Tính exp
@@ -1431,21 +1422,25 @@ public class MainObject {
                         }
                         if (((focus.hp - dame_pet) > 0) && (p.pet_atk_speed < System.currentTimeMillis()) && (a2 > 1)) {
                             if (focus.isMob() && (my_pet.get_id() == 3269 || my_pet.name.equals("Đại Bàng"))) {
-                                int vangjoin = Util.random(1666, 2292);
+                                int vangjoin = Util.random(1666, 11111);
                                 p.update_vang(vangjoin);
-                                Log.gI().add_log(p.name, "Nhận " + vangjoin + " từ đại bàng");
                                 Service.send_notice_nobox_white(p.conn, "+ " + vangjoin + " vàng");
                             }
-                            if (focus.isPlayer() && my_pet.get_id() == 4614 && Util.nextInt(100) < 5) {
+                            if ((focus.isPlayer() || focus.isMob())&& my_pet.get_id() == 4614 && Util.nextInt(100) < 5) {
                                 p_focus.add_EffDefault(StrucEff.VET_THUONG_SAU, 1, 5000);
                                 Service.send_notice_nobox_white(p_focus.conn, "Bạn bị vết thương sâu");
                             }
-                            if (focus.isPlayer() && my_pet.get_id() == 4626 && Util.nextInt(100) < 5) {
+                            if ((focus.isPlayer() || focus.isMob()) && my_pet.get_id() == 4626 && Util.nextInt(100) < 5) {
                                 p_focus.add_EffDefault(StrucEff.TE_CONG, 1, 5000);
                                 Service.usepotion(p_focus, 0, (int) -(p_focus.hp * Util.random(5, 10) * 0.01));
                                 Service.send_notice_nobox_white(p_focus.conn, "Bạn bị tê cóng");
                             }
-                            if (focus.isPlayer() && my_pet.get_id() == 3616 && Util.nextInt(100) < 5){
+                            if ((focus.isPlayer() || focus.isMob()) && my_pet.get_id() == 4631 || my_pet.get_id() == 4699 ||
+                                    my_pet.get_id() == 4768 || my_pet.get_id() == 4788 || my_pet.get_id() == 4622 && Util.nextInt(100) < 5) {
+                                ObjAtk.add_EffMe_Kham(StrucEff.KhienMaThuat, 0, System.currentTimeMillis() + 5000);
+                                Eff_special_skill.send_eff_Meday(p, 86, 5000);
+                            }
+                            if ((focus.isPlayer() || focus.isMob()) && my_pet.get_id() == 3616 && Util.nextInt(100) < 5){
                                 int ran = Util.random(0,100);
                                 if (ran < 30){
                                     p.qua_noel = 1;

@@ -1,8 +1,8 @@
 package core;
 
-import BossHDL.BossTG;
 import ai.NhanBan;
 import ev_he.*;
+import event.EventManager;
 import event.Event_1;
 import java.io.IOException;
 import java.sql.Connection;
@@ -111,7 +111,6 @@ public class Manager {
     public static Clan ClanThue;
     public static final List<String> PlayersWinCThanh = new ArrayList<>();
     public static HashMap<Byte, List<Short>> item_sell;
-    public BossTG bossTG;
 
     public static void setClanThue() {
         if (nameClanThue == null || nameClanThue.isEmpty()) {
@@ -239,8 +238,6 @@ public class Manager {
             System.out.println("cache loaded!");
             this.vxmm = new VXMM2();
             this.vxkc = new VXKC2();
-            bossTG = new BossTG();
-            bossTG.start_boss();
             Log.gI().start_log();
             for (Map[] temp : Map.entrys) {
                 for (Map temp2 : temp) {
@@ -389,17 +386,17 @@ public class Manager {
         }
         rs.close();
 
-        query = "SELECT * FROM `mconfig`;";
-        rs = ps.executeQuery(query);
-        while (rs.next()) {
-            if (rs.getString("name").equals("name_server")) {
-                core.infoServer.NameServer = rs.getString("data");
-            }
-            if (rs.getString("name").equals("site_server")) {
-                core.infoServer.Website = rs.getString("data");
-            }
-        }
-        rs.close();
+//        query = "SELECT * FROM `mconfig`;";
+//        rs = ps.executeQuery(query);
+//        while (rs.next()) {
+//            if (rs.getString("name").equals("name_server")) {
+//                core.infoServer.NameServer = rs.getString("data");
+//            }
+//            if (rs.getString("name").equals("site_server")) {
+//                core.infoServer.Website = rs.getString("data");
+//            }
+//        }
+//        rs.close();
         // load item7
         query = "SELECT * FROM `item7`;";
         rs = ps.executeQuery(query);
@@ -951,10 +948,11 @@ public class Manager {
         }else if (this.event == 4) {
             query = "SELECT * FROM `event` WHERE `id` = 3;";
             rs = ps.executeQuery(query);
-            long t_ = System.currentTimeMillis();
             while (rs.next()) {
                 JSONObject jsob = (JSONObject) JSONValue.parse(rs.getString("data"));
-                Event_4.LoadDB(jsob);
+                if (jsob != null) {
+                    EventManager.loadDatabase(jsob);
+                }
             }
         }else if (this.event == 5) {
             query = "SELECT * FROM `event` WHERE `id` = 4;";
@@ -1232,7 +1230,6 @@ public class Manager {
 
     public void close() {
         vxmm.close();
-        bossTG.stop_boss();
         Log.gI().close_log();
         //
         for (int i = 0; i < Map.entrys.size(); i++) {

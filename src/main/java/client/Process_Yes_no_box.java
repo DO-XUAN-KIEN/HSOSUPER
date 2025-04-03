@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import event.LunarNewYear;
 import event_daily.ChiemThanhManager;
 import event_daily.Wedding;
 import event_daily.*;
@@ -82,7 +83,7 @@ public class Process_Yes_no_box {
                     if (!conn.p.isOwner) {
                         return;
                     }
-                    if (conn.p.checkcoin() < 100000) {
+                    if (conn.p.checkcoin() < 1_000_000) {
                         Service.send_notice_box(conn, "Không đủ coin");
                         return;
                     }
@@ -94,9 +95,9 @@ public class Process_Yes_no_box {
                         Squire.create(conn.p);
                         conn.p.squire = new Squire(conn, conn.p.index);
                         conn.p.squire.load();
-                        conn.p.update_coin(-100_000);
+                        conn.p.update_coin(-1_000_000);
                         His_COIN hisc = new His_COIN(conn.user ,conn.p.name);
-                        hisc.coin_change = 100000;
+                        hisc.coin_change = 1_000_000;
                         hisc.coin_last = conn.p.checkcoin();
                         hisc.Logger = "(TRỪ COIN) từ đệ tử";
                         hisc.Flus();
@@ -359,12 +360,34 @@ public class Process_Yes_no_box {
                         Service.send_notice_box(conn, "chưa đủ 100% exp!");
                         return;
                     }
-                    if(temp.it.tier >= 25){
+                    if(temp.it.tier >= 100){
                         Service.send_notice_box(conn, "Nhẫn đã nâng cấp tối đa");
                         return;
                     }
-                    long vang_req = (3 * (temp.it.tier + 1)) * 5_000_000L;
-                    int ngoc_req = (3 * (temp.it.tier + 1)) * 10_000;
+                    long vang_req;
+                    int ngoc_req;
+                    int coin_req;
+                    if (temp.it.tier <= 20){
+                        vang_req = 100_000_000;
+                        ngoc_req = 10_000;
+                        coin_req = 10_000;
+                    } else if (temp.it.tier > 20 && temp.it.tier <= 40){
+                        vang_req = 500_000_000;
+                        ngoc_req = 50_000;
+                        coin_req = 50_000;
+                    } else if (temp.it.tier > 40 && temp.it.tier <= 60){
+                        vang_req = 1_000_000_000;
+                        ngoc_req = 100_000;
+                        coin_req = 100_000;
+                    } else if (temp.it.tier > 60 && temp.it.tier <= 80){
+                        vang_req = 2_000_000_000;
+                        ngoc_req = 200_000;
+                        coin_req = 200_000;
+                    } else {
+                        vang_req = 3_000_000_000l;
+                        ngoc_req = 300_000;
+                        coin_req = 300_000;
+                    }
                     if (conn.p.get_vang() < vang_req) {
                         Service.send_notice_box(conn, "chưa đủ " + vang_req + " vàng!");
                         return;
@@ -373,37 +396,28 @@ public class Process_Yes_no_box {
                         Service.send_notice_box(conn, "chưa đủ " + ngoc_req + " ngọc!");
                         return;
                     }
+                    if (conn.p.checkcoin() < coin_req) {
+                        Service.send_notice_box(conn,"chưa đủ "+coin_req+" coin!");
+                        return;
+                    }
                     conn.p.update_vang(-vang_req);
-                    Log.gI().add_log(conn.p.name, "Trừ " + vang_req + " nâng nhẫn cưới");
                     conn.p.update_ngoc(-ngoc_req);
+                    conn.p.update_coin(-coin_req);
                     conn.p.item.char_inventory(5);
-                    int suc = Util.random(100);
-                    if ((suc < 80 && temp.it.tier <= 5) ||
-                        (suc < 60 && (temp.it.tier >= 5 && temp.it.tier < 10)) ||
-                        (suc < 40 && (temp.it.tier >= 10 && temp.it.tier < 15)) ||
-                        (suc < 10 && (temp.it.tier >= 15 && temp.it.tier < 20)) ||
-                        (suc < 2 && (temp.it.tier >= 20 && temp.it.tier < 25)) ||
-                        (suc < 1 && (temp.it.tier >= 25 && temp.it.tier < 33)) || conn.ac_admin > 66) {
-                        temp.exp -= Level.entrys.get(temp.it.tier).exp;
-                        temp.it.tier++;
-                        Service.send_notice_box(conn, "nâng cấp thành công lên +" + temp.it.tier);
-                        conn.p.item.wear[23] = temp.it;
-                        Service.send_wear(conn.p);
-                        Service.send_char_main_in4(conn.p);
-                        MapService.update_in4_2_other_inside(conn.p.map, conn.p);
-                        //
-                        Player p0 = Map.get_player_by_name(temp.name_1.equals(conn.p.name) ? temp.name_2 : temp.name_1);
-                        if (p0 != null) {
-                            p0.item.wear[23] = temp.it;
-                            Service.send_wear(p0);
-                            Service.send_char_main_in4(p0);
-                            MapService.update_in4_2_other_inside(p0.map, p0);
-                        }
-                    } else {
-                        if(temp.it.tier >= 15){
-                            temp.exp -=(Level.entrys.get(temp.it.tier).exp)/2;
-                        }
-                        Service.send_notice_box(conn, "nâng cấp thất bại!");
+                    temp.exp -= Level.entrys.get(temp.it.tier).exp;
+                    temp.it.tier++;
+                    Service.send_notice_box(conn, "nâng cấp thành công lên +" + temp.it.tier);
+                    conn.p.item.wear[23] = temp.it;
+                    Service.send_wear(conn.p);
+                    Service.send_char_main_in4(conn.p);
+                    MapService.update_in4_2_other_inside(conn.p.map, conn.p);
+                    //
+                    Player p0 = Map.get_player_by_name(temp.name_1.equals(conn.p.name) ? temp.name_2 : temp.name_1);
+                    if (p0 != null) {
+                        p0.item.wear[23] = temp.it;
+                        Service.send_wear(p0);
+                        Service.send_char_main_in4(p0);
+                        MapService.update_in4_2_other_inside(p0.map, p0);
                     }
                     break;
                 }
@@ -689,6 +703,20 @@ public class Process_Yes_no_box {
                     }
                     break;
                 }
+                case -111: {
+                    if (LunarNewYear.runing == true) {
+                        Service.send_notice_box(conn, "Không trong thời gian đăng ký!");
+                        return;
+                    }
+                    if (conn.p.get_ngoc() < 5) {
+                        Service.send_notice_box(conn, "Không đủ ngọc");
+                        return;
+                    }
+                    LunarNewYear.add_material(conn.p.name, 0, (short) 0, 0);
+                    conn.p.update_ngoc(-5);
+                    Service.send_notice_box(conn, "Đăng ký thành công");
+                    break;
+                }
                 case -118: {
                     try {
                         Leo_thap d = Leo_thapManager.get_list(conn.p.name);
@@ -741,62 +769,55 @@ public class Process_Yes_no_box {
                     }
                     break;
                 }
-                case -117: {
-                    String notice = "Danh sách người chơi vào phó bản :\n1) " + conn.p.name + " : level " + conn.p.level;
-                    if (conn.p.party != null) {
-                        Service.send_notice_box(conn, "Phó bản hiện tại chỉ hỗ trợ chế độ solo");
-                        return;
-                    }
-                    notice += "\nĐộ khó: ??? \nHãy xác nhận." + (conn.p.point_active[0] != 10 ? " phí vào là 5000 coin." : "");
-//                conn.p.dungeon = null;
-                    conn.p.update_coin(-5000);
-                    conn.p.point_active[0] += 1;
-                    Service.send_box_input_yesno(conn, 119, notice);
-                    break;
-                }
                 case 119: {
-                    if(conn.p.point_active[0] !=10)
-                    {
-                        if(conn.p.get_ngoc() < 30)
-                        {
-                            Service.send_notice_box(conn, "Bạn không đủ ngọc để tham gia!");
-                            return;
+                    try {
+                        if (conn.p.point_active[0] != 10) {
+                            if (conn.p.get_ngoc() < 30) {
+                                Service.send_notice_box(conn, "Bạn không đủ ngọc để tham gia!");
+                                return;
+                            }
+                            conn.p.update_ngoc(-30);
+                            conn.p.item.char_chest(5);
                         }
-                        conn.p.update_ngoc(-30);
-                        conn.p.item.char_chest(5);
-                    }
-                    Dungeon d = DungeonManager.get_list(conn.p.name);
-                    if (d == null) {
-                        try {
-                            d = new Dungeon();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        if(conn.p.point_active[0] <= 0)
-                            Service.send_notice_box(conn, "Hãy quay lại vào ngày hôm sau!");
-                        else if (d != null) {
-                            conn.p.point_active[0]--;
-                            //
-                            d.name_party = conn.p.name;
-                            d.setMode(0);
-                            //
+                        Dungeon d = DungeonManager.get_list(conn.p.name);
+                        if (d == null) {
+                            try {
+                                d = new Dungeon();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            if (conn.p.point_active[0] <= 0)
+                                Service.send_notice_box(conn, "Hãy quay lại vào ngày hôm sau!");
+                            else if (d != null) {
+                                conn.p.point_active[0]--;
+                                //
+                                d.name_party = conn.p.name;
+                                d.setMode(0);
+                                //
+                                conn.p.map48 = false;
+                                conn.p.add_EffDefault(-227, 1, 10 * 60 * 1000);
+                                EffTemplate ef = conn.p.get_EffDefault(-227);
+                                Service.send_time_box(conn.p, (byte) 1, new short[]{(short) ((ef.time - System.currentTimeMillis()) / 1000)}, new String[]{"Thời gian đi còn: "});
+                                MapService.leave(conn.p.map, conn.p);
+                                conn.p.map = d.template;
+                                conn.p.x = 584;
+                                conn.p.y = 672;
+                                MapService.enter(conn.p.map, conn.p);
+                                d.send_map_data(conn.p);
+                                //
+                                DungeonManager.add_list(d);
+                            } else {
+                                Service.send_notice_box(conn, "Lỗi, hãy thử lại sau!");
+                            }
+                        } else {
                             MapService.leave(conn.p.map, conn.p);
                             conn.p.map = d.template;
-                            conn.p.x = 584;
-                            conn.p.y = 672;
                             MapService.enter(conn.p.map, conn.p);
                             d.send_map_data(conn.p);
-                            //
-                            DungeonManager.add_list(d);
-                        } else {
-                            Service.send_notice_box(conn, "Lỗi, hãy thử lại sau!");
+                            d.send_mob_move_when_exit(conn.p);
                         }
-                    } else {
-                        MapService.leave(conn.p.map, conn.p);
-                        conn.p.map = d.template;
-                        MapService.enter(conn.p.map, conn.p);
-                        d.send_map_data(conn.p);
-                        d.send_mob_move_when_exit(conn.p);
+                    }catch (Exception e){
+                        e.printStackTrace();
                     }
                     break;
                 }

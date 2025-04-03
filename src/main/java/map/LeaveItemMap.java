@@ -320,9 +320,9 @@ public class LeaveItemMap {
 //                    if(Util.random(100)<10){
 //                        id_item_leave7 = new short[]{(short) Util.random(481,493)};
 //                    }
-//                    if(Manager.gI().event == 11){
-//                        id_item_hongio = new short[]{336};
-//                    }
+                    if(Manager.gI().event == 11){
+                        id_item_hongio = new short[]{336};
+                    }
 //                    id_item_leave_boss = new short[]{138,(short) Util.random(472,480)};
 //                    sizeRandomMedal = (short) (30);
                     break;
@@ -361,6 +361,18 @@ public class LeaveItemMap {
                     id_item_leave4 = new short[]{-1, -1, -1, -1, -1, -1, 273, 274, 251};
                     id_sk4 = new short[]{348};
                     id_item_leave7 = new short[]{(short) Util.random(146, 246),(short) Util.random(481, 485)};
+                    break;
+                }
+                case 217: {
+                    if (Util.random(100) >= 50){
+                        id_item_hongio = new short[]{378};
+                    }else {
+                        id_item_hongio = new short[]{379};
+                    }
+                    break;
+                }
+                case 218: {
+                    p.mm_tt += 1;
                     break;
                 }
                 case 193: {
@@ -645,14 +657,20 @@ public class LeaveItemMap {
     }
 
     public static void leave_item_event(Map map, Mob_in_map mob, Player p) throws IOException {
-        if (Manager.gI().event != 1) {
-            return;
-        }
         if (mob != null) {
-            short index_real = EventManager.item_leave[Manager.gI().event - 1][Util
-                    .random(EventManager.item_leave[Manager.gI().event - 1].length)];
-            if (!Event_1.check(p.name) && index_real >= 153 && index_real <= 156) {
-                return;
+            short index_real = 0;
+            if (Manager.gI().event == 1) {
+                index_real = EventManager.item_leave[Manager.gI().event - 1][Util
+                        .random(EventManager.item_leave[Manager.gI().event - 1].length)];
+                if (!Event_1.check(p.name) && index_real >= 153 && index_real <= 156) {
+                    return;
+                }
+            }else if (Manager.gI().event == 4){
+                if (!EventManager.check(EventManager.registerList, p.name)) {
+                    return;
+                }
+                index_real = EventManager.item_drop[Manager.gI().event][Util
+                        .random(EventManager.item_drop[Manager.gI().event].length)];
             }
             //
             leave_item_by_type4(map, index_real, p, mob.index);

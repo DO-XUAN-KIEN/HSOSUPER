@@ -1,6 +1,7 @@
 package template;
 
 import client.Player;
+import core.Manager;
 import core.Util;
 
 import java.io.IOException;
@@ -33,11 +34,19 @@ public class Mob_Dungeon extends MainObject {
             // mob die
             if (!this.isDie) {
                 this.isDie = true;
-                // send p outside
-                if(30>Util.random(0,100))
-                    Dungeon.leave_item_by_type7(map, (short)Util.random(417,464), (Player)mainAtk, this.index);
-                if(5>Util.random(0,100))
-                    Dungeon.leave_item_by_type7(map, Medal_Material.m_blue[Util.random(Medal_Material.m_blue.length)], (Player)mainAtk, this.index);
+                if (Manager.gI().event == 4){
+                    if (5 > Util.random(0,200)){
+                        if (50 > Util.random(100))
+                            Dungeon.leave_item_by_type4(map, (short) 129,(Player)mainAtk,this.index);
+                        else
+                            Dungeon.leave_item_by_type4(map, (short) 259,(Player)mainAtk,this.index);
+                    }
+                }
+//                // send p outside
+//                if(30>Util.random(0,100))
+//                    Dungeon.leave_item_by_type7(map, (short)Util.random(417,464), (Player)mainAtk, this.index);
+//                if(5>Util.random(0,100))
+//                    Dungeon.leave_item_by_type7(map, Medal_Material.m_blue[Util.random(Medal_Material.m_blue.length)], (Player)mainAtk, this.index);
             }
             ((Player)mainAtk).point_active[1] += (dungeon.wave / 5);
             dungeon.num_mob--;

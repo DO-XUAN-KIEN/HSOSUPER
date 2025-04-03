@@ -441,7 +441,7 @@ public class Session implements Runnable {
                         ipCount = rs.getInt("ip_count");
                     }
                     // Kiểm tra số lượng IP trùng nhau
-                    if (ipCount >= 3) {
+                    if (ipCount >= 100) {
                         noticelogin("Số lượng IP đăng ký đã đạt giới hạn, vui lòng thử lại sau!");
                         // Xóa tài khoản vừa mới tạo
                         String deleteQuery = "DELETE FROM `account` WHERE `user` = '" + user + "'";

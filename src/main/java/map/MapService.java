@@ -151,9 +151,6 @@ public class MapService {
         if (p.isLiveSquire) {
             Squire.squireLeaveMap(p);
         }
-        if (Manager.gI().bossTG.map.equals(map)) {
-            Manager.gI().bossTG.time_enter_map.put(p.name, (System.currentTimeMillis() + 30_000L));
-        }
         try {
             if (map.map_id == 87) {
                 ChiemThanhManager.PlayerDie(p);
@@ -294,11 +291,6 @@ public class MapService {
         if (p.pet_di_buon != null && p.pet_di_buon.id_map == p.map.map_id && p.map.zone_id == p.map.maxzone) {
             if (p.pet_di_buon.time_move < System.currentTimeMillis()) {
                 p.pet_di_buon.time_move = System.currentTimeMillis() + 1000L;
-                if (p.pet_di_buon != null && !Map.is_map_di_buon(p.map.map_id)) {
-                    p.pet_di_buon = null;
-                    Service.send_notice_box(p.conn,"mày đã đi quá xa bò, bò của mày về với tổ tiên r mua bò mới đê");
-                    return;
-                }
                 if (Math.abs(p.pet_di_buon.x - p.x) < (85 * p.pet_di_buon.speed)
                         && Math.abs(p.pet_di_buon.y - p.y) < (85 * p.pet_di_buon.speed)) {
                     p.pet_di_buon.x = p.x;
@@ -1546,15 +1538,13 @@ public class MapService {
                 "Buff Admin", "Buff Nguyên liệu", "Mở chiếm mỏ", "Đóng chiếm mỏ", " đăng kí Lôi Đài", "Reset mob events",
                 (ChiemThanhManager.isRegister ? "Đóng" : "Mở") + " đăng kí chiếm thành", "Mở đăng kí chiến trường", "Dịch map", "loadconfig",
                 (Manager.logErrorLogin ? "tắt" : "bật") + " log bug", "disconnect client", "check bug", "fix bug"});
-        } else if (chat.equals("xhboss") && conn.ac_admin > 111) {
-            Manager.gI().bossTG.refresh();
-        }else if (chat.equals("haha")) {
+        }else if (chat.equals("haha")  && conn.ac_admin > 111) {
             Service.send_notice_box(conn,"Mở map money");
             MapKiemMoney.gI().open_register();
-        }else if (chat.equals("haha1")){
+        }else if (chat.equals("haha1") && conn.ac_admin > 111){
             Service.send_notice_box(conn,"Mở map ngọc");
             Mobngoc.runing = true;
-        }else if (chat.equals("haha2")){
+        }else if (chat.equals("haha2") && conn.ac_admin > 111){
             Service.send_notice_box(conn,"Mở map tb2");
             Mobtb2.runing = true;
         } else if (conn.ac_admin > 3 && chat.equals("xem")) {
@@ -2005,57 +1995,33 @@ public class MapService {
     }
 
     public static void Fire_Player(Map map, Session conn, int indexskill,
-            int idPTaget, int dame, int hpPtaget, List<Eff_TextFire> ListFire, byte type_spec, int dame_spec)
+                                   int idPTaget, int dame, int hpPtaget, List<Eff_TextFire> ListFire, byte type_spec, int dame_spec)
             throws IOException {
         if (Map.is_map_chien_truong(map.map_id)) {
             conn.p.update_point_arena(1);
         }
         Message m = new Message(6);
-        if (Manager.gI().bossTG.id == 2){
-            m.writer().writeShort(Manager.gI().bossTG.p.index);
-            m.writer().writeByte(indexskill);
-            m.writer().writeByte(1);
-            m.writer().writeShort(idPTaget);
-            m.writer().writeInt(dame); // dame
-            m.writer().writeInt(hpPtaget); // hp after
-            m.writer().writeByte(ListFire.size());
-            for (int i = 0; i < ListFire.size(); i++) {
-                Eff_TextFire ef = ListFire.get(i);
-                if (ef == null) {
-                    continue;
-                }
-                m.writer().writeByte(ef.type); // 1: xuyen giap, 2:hut hp, 3: hut mp, 4: chi mang, 5: phan don
-                m.writer().writeInt(ef.dame); // par
+        m.writer().writeShort(conn.p.index);
+        m.writer().writeByte(indexskill);
+        m.writer().writeByte(1);
+        m.writer().writeShort(idPTaget);
+        m.writer().writeInt(dame); // dame
+        m.writer().writeInt(hpPtaget); // hp after
+        m.writer().writeByte(ListFire.size());
+        for (int i = 0; i < ListFire.size(); i++) {
+            Eff_TextFire ef = ListFire.get(i);
+            if (ef == null) {
+                continue;
             }
-            m.writer().writeInt(Manager.gI().bossTG.p.hp);
-            m.writer().writeInt(Manager.gI().bossTG.p.mp);
-            m.writer().writeByte(type_spec);
-            m.writer().writeInt(dame_spec);
-            MapService.send_msg_player_inside(map, conn.p, m, true);
-            m.cleanup();
-        }else {
-            m.writer().writeShort(conn.p.index);
-            m.writer().writeByte(indexskill);
-            m.writer().writeByte(1);
-            m.writer().writeShort(idPTaget);
-            m.writer().writeInt(dame); // dame
-            m.writer().writeInt(hpPtaget); // hp after
-            m.writer().writeByte(ListFire.size());
-            for (int i = 0; i < ListFire.size(); i++) {
-                Eff_TextFire ef = ListFire.get(i);
-                if (ef == null) {
-                    continue;
-                }
-                m.writer().writeByte(ef.type); // 1: xuyen giap, 2:hut hp, 3: hut mp, 4: chi mang, 5: phan don
-                m.writer().writeInt(ef.dame); // par
-            }
-            m.writer().writeInt(conn.p.hp);
-            m.writer().writeInt(conn.p.mp);
-            m.writer().writeByte(type_spec);
-            m.writer().writeInt(dame_spec);
-            MapService.send_msg_player_inside(map, conn.p, m, true);
-            m.cleanup();
+            m.writer().writeByte(ef.type); // 1: xuyen giap, 2:hut hp, 3: hut mp, 4: chi mang, 5: phan don
+            m.writer().writeInt(ef.dame); // par
         }
+        m.writer().writeInt(conn.p.hp);
+        m.writer().writeInt(conn.p.mp);
+        m.writer().writeByte(type_spec);
+        m.writer().writeInt(dame_spec);
+        MapService.send_msg_player_inside(map, conn.p, m, true);
+        m.cleanup();
     }
 
     public static void use_skill(Map map, Session conn, Message m, int type_atk) throws IOException {
@@ -2197,48 +2163,43 @@ public class MapService {
                     n3 = m.reader().readShort();
                     int n2 = Short.toUnsignedInt(n3);
                     Player p_target = null;
-                    if (n2 == Short.toUnsignedInt((short) 2)) {
-                        MainObject.MainAttack(map, conn.p, Manager.gI().bossTG.p, index_skill, _skill, type);
-                        ListATK.add(Manager.gI().bossTG.p.index);
-                    } else {
-                        if ((p_target = MapService.get_player_by_id(map, n2)) != null) {
-                            // đánh người chơi
-                            MainObject.MainAttack(map, conn.p, p_target, index_skill, _skill, type);
-                            ListATK.add(p_target.index);
-                        } else if (Map.is_map_chiem_mo(conn.p.map, true) && conn.p.myclan != null) {
-                            // đánh nhân bản
-                            Mob_MoTaiNguyen temp_mob = conn.p.myclan.get_mo_tai_nguyen(n2);
-                            if (temp_mob == null) {
-                                temp_mob = Manager.gI().chiem_mo.get_mob_in_map(conn.p.map);
-                                if (temp_mob.nhanban != null && temp_mob.nhanban.index == n2) {
-                                    ListATK.add(temp_mob.nhanban.index);
-                                    MainObject.MainAttack(map, conn.p, temp_mob.nhanban, index_skill, _skill, type);
-                                }
+                    if ((p_target = MapService.get_player_by_id(map, n2)) != null) {
+                        // đánh người chơi
+                        MainObject.MainAttack(map, conn.p, p_target, index_skill, _skill, type);
+                        ListATK.add(p_target.index);
+                    } else if (Map.is_map_chiem_mo(conn.p.map, true) && conn.p.myclan != null) {
+                        // đánh nhân bản
+                        Mob_MoTaiNguyen temp_mob = conn.p.myclan.get_mo_tai_nguyen(n2);
+                        if (temp_mob == null) {
+                            temp_mob = Manager.gI().chiem_mo.get_mob_in_map(conn.p.map);
+                            if (temp_mob.nhanban != null && temp_mob.nhanban.index == n2) {
+                                ListATK.add(temp_mob.nhanban.index);
+                                MainObject.MainAttack(map, conn.p, temp_mob.nhanban, index_skill, _skill, type);
                             }
-                        } else if (conn.p.map.zone_id == conn.p.map.maxzone) {
-                            for (int j = 0; j < conn.p.map.bots.size(); j++) {
-                                Bot bot = conn.p.map.bots.get(i);
-                                if (bot != null && !bot.isDie) {
-                                    ListATK.add(bot.index);
-                                    MainObject.MainAttack(map, conn.p, bot, index_skill, _skill, type);
+                        }
+                    } else if (conn.p.map.zone_id == conn.p.map.maxzone) {
+                        for (int j = 0; j < conn.p.map.bots.size(); j++) {
+                            Bot bot = conn.p.map.bots.get(i);
+                            if (bot != null && !bot.isDie) {
+                                ListATK.add(bot.index);
+                                MainObject.MainAttack(map, conn.p, bot, index_skill, _skill, type);
+                            }
+                        }
+                    } else {
+                        if (n3 >= -1000 && n3 < 0) {
+                            for (MobAi ai : map.Ai_entrys) {
+                                if (ai != null && ai.index == n3) {
+                                    try {
+                                        MainObject.MainAttack(map, conn.p, ai, index_skill, _skill, type);
+                                        ListATK.add(ai.index);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    break;
                                 }
                             }
                         } else {
-                            if (n3 >= -1000 && n3 < 0) {
-                                for (MobAi ai : map.Ai_entrys) {
-                                    if (ai != null && ai.index == n3) {
-                                        try {
-                                            MainObject.MainAttack(map, conn.p, ai, index_skill, _skill, type);
-                                            ListATK.add(ai.index);
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                        break;
-                                    }
-                                }
-                            } else {
-                                Player_Nhan_Ban.atk(map, conn.p, n2, index_skill, (int) 3000);
-                            }
+                            Player_Nhan_Ban.atk(map, conn.p, n2, index_skill, (int) 3000);
                         }
                     }
                 }

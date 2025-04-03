@@ -31,6 +31,8 @@ public class Player extends Body2 {
 
     public List<EffTemplate> list_eff = new ArrayList<>();
     ;
+    public boolean map48;
+    public boolean hopde;
     public boolean is_nhanban;
     public final Session conn;
     //    public final int index;
@@ -69,12 +71,12 @@ public class Player extends Body2 {
     public long vang;
     public int kimcuong;
     //    public boolean isdie;
-    public short tiemnang;
-    public short kynang;
-    public short point1;
-    public short point2;
-    public short point3;
-    public short point4;
+    public long tiemnang;
+    public long kynang;
+    public long point1;
+    public long point2;
+    public long point3;
+    public long point4;
     public int suckhoe;
     public int pointarena;
     //    public byte typepk;
@@ -232,6 +234,7 @@ public class Player extends Body2 {
         istb2 = false;
         istb1 = false;
         isCreateArmor = false;
+        id_medal_is_created = -1;
         ClazzItemStar = -1;
         TypeItemStarCreate = -1;
     }
@@ -429,12 +432,12 @@ public class Player extends Body2 {
                 vang = rs.getLong("vang");
                 kimcuong = rs.getInt("kimcuong");
                 isDie = false;
-                tiemnang = rs.getShort("tiemnang");
-                kynang = rs.getShort("kynang");
-                point1 = rs.getShort("point1");
-                point2 = rs.getShort("point2");
-                point3 = rs.getShort("point3");
-                point4 = rs.getShort("point4");
+                tiemnang = rs.getLong("tiemnang");
+                kynang = rs.getLong("kynang");
+                point1 = rs.getLong("point1");
+                point2 = rs.getLong("point2");
+                point3 = rs.getLong("point3");
+                point4 = rs.getLong("point4");
                 pointarena = rs.getInt("point_arena");
                 group_king_cup = rs.getByte("group_king_cup");
                 point_king_cup = rs.getShort("point_king_cup");
@@ -742,7 +745,7 @@ public class Player extends Body2 {
                     JSONArray js = (JSONArray) JSONValue.parse(jsar.get(i).toString());
                     Pet temp = new Pet();
                     temp.setup(js);
-                    temp.update_grown(t_off);
+                    //temp.update_grown(t_off);
                     if (temp.is_follow) {
                         pet_follow = temp.get_id();
                     }
@@ -1060,7 +1063,7 @@ public class Player extends Body2 {
                 jsar.clear();
                 for (int i = 0; i < MainEff.size(); i++) {
                     EffTemplate temp = MainEff.get(i);
-                    if (temp.id != -126 && temp.id != -125 && temp.id != -127 && temp.id != -128 && temp.id != -129 && temp.id != -130 && !(temp.id >= -222 && temp.id <= -225)) {
+                    if (temp.id != -126 && temp.id != -125 && temp.id != -127 && temp.id != -128 && temp.id != -333 && !(temp.id >= -226 && temp.id <= -222)) {
                         continue;
                     }
                     JSONArray jsar21 = new JSONArray();
@@ -1562,11 +1565,14 @@ public class Player extends Body2 {
             // diem danh
             diemdanh = 1;
             chucphuc = 1;
+            mm_tt = 0;
+            mm_md = 0;
             if (Manager.gI().event == 8){
                 diemsukien = 0;
             }
+            chuyencan = 0;
             khu2 = 2;
-            point_active[0] = 2;
+            point_active[0] = 1;
             point_active[1] = 0;
             quest_daily = new int[]{-1, -1, 0, 0, 10};
             date = Date.from(Instant.now());
@@ -1595,7 +1601,7 @@ public class Player extends Body2 {
                 }
                 break;
             }
-            case 2: {//
+            case 2: {//x3
                 EffTemplate tempp = conn.p.get_EffDefault(-222);
                 if (tempp != null) {
                     long time_eff = tempp.time - System.currentTimeMillis();
@@ -1677,7 +1683,7 @@ public class Player extends Body2 {
 //        }
         if (p.pet_di_buon != null && !Map.is_map_di_buon(p.map.map_id)) {
             p.pet_di_buon = null;
-            Service.send_notice_box(p.conn,"mày đã đi quá xa bò, bò của mày về với tổ tiên r mua bò mới đê");
+            Service.send_notice_box(p.conn,"mày đã đi quá xa bò, bò của mày về với tổ tiên r mua bò mới đê!");
             return;
         }
         if (map.map_id == 0) {
@@ -1778,10 +1784,10 @@ public class Player extends Body2 {
         if ((type_exp == 0 && this.typepk != 0) || this.getlevelpercent() < (-500)) {
             return;
         }
-        if (!isOwner && owner.level <= level) {
-            level = owner.level;
-            return;
-        }
+//        if (!isOwner && owner.level <= level) {
+//            level = owner.level;
+//            return;
+//        }
         if (this.map.zone_id == 1 && !Map.is_map_not_zone2(this.map.map_id)) { // Khu 2
             dame_exp += ((dame_exp * 5) / 100);
         }
@@ -1810,7 +1816,9 @@ public class Player extends Body2 {
             while (exp >= Level.entrys.get(level - 1).exp && level < Manager.gI().lvmax) {
                 exp -= Level.entrys.get(level - 1).exp;
                 level++;
-                if ((tiemnang + point1 + point2 + point3 + point4) < 32000) {
+                if (level > 140){
+                    tiemnang += 1;
+                }else if ((tiemnang + point1 + point2 + point3 + point4) < 32000) {
                     point1++;
                     point2++;
                     point3++;
@@ -2054,10 +2062,17 @@ public class Player extends Body2 {
 
     public void rest_potential_point() throws IOException {
         tiemnang += (short) (point1 + point2 + point3 + point4);
-        point1 = (short) (4 + level);
-        point2 = (short) (4 + level);
-        point3 = (short) (4 + level);
-        point4 = (short) (4 + level);
+        if (level >= 140){
+            point1 = (short) 143;
+            point2 = (short) 143;
+            point3 = (short) 143;
+            point4 = (short) 143;
+        }else {
+            point1 = (short) (4 + level);
+            point2 = (short) (4 + level);
+            point3 = (short) (4 + level);
+            point4 = (short) (4 + level);
+        }
         tiemnang -= (point1 + point2 + point3 + point4);
         hp = body.get_HpMax();
         mp = body.get_MpMax();
@@ -2283,6 +2298,10 @@ public class Player extends Body2 {
                     return;
                 }
                 if (skill_point[index] == 0 && (index == 19 || index == 20)) {
+                    if(this.level < 111){
+                        Service.send_notice_box(conn,"level 111 mới học được kĩ năng này");
+                        return;
+                    }
                     boolean dont_have_book_skill_110 = true;
                     switch (clazz) {
                         case 0: {
@@ -2360,10 +2379,6 @@ public class Player extends Body2 {
                     }
                     if (dont_have_book_skill_110 && conn.ac_admin < 4) {
                         Service.send_notice_box(conn, "Chưa có sách kỹ năng để học!");
-                        return;
-                    }
-                    if(conn.p.level < 111){
-                        Service.send_notice_box(conn,"level 111 mới học được kĩ năng này");
                         return;
                     }
                     item.char_inventory(3);
@@ -2852,7 +2867,25 @@ public class Player extends Body2 {
         vgo.y_new = 318;
         conn.p.change_map(conn.p, vgo);
     }
-    
+    public static void Sen_eff_111(Player p, byte id_eff)throws IOException{
+
+        Message m = new Message(-49);
+        byte[] data = Util.loadfile("data/part_char/imgver/x" + p.conn.zoomlv + "/Data/" + (111 + "_" + id_eff));
+        m.writer().writeByte(0);
+        m.writer().writeShort(data.length);
+        m.writer().write(data);
+        m.writer().writeByte(0);
+        m.writer().writeByte(1);
+        m.writer().writeByte(id_eff);// id part char
+        m.writer().writeShort(p.index);
+        m.writer().writeByte(0);//tem mob
+        m.writer().writeByte(0);
+        m.writer().writeShort(1500);
+        m.writer().writeByte(0);
+        MapService.send_msg_player_inside(p.map, p, m, true);
+        //conn.addmsg(m);
+        m.cleanup();
+    }
 //    public NpcTemplate findNPC(byte id) {
 //        for (NpcTemplate npc : npcs) {
 //            if (npc.id == id && Math.abs(npc.x - this.x) < 150 && Math.abs(npc.y - this.y) < 150) {

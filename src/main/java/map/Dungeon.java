@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import client.Pet;
 import client.Player;
+import core.Manager;
 import core.Service;
 import core.Util;
 import io.Message;
@@ -30,6 +31,7 @@ public class Dungeon {
     private int hp;
     public String name_party;
     private byte mode_now;
+    private Player p;
     private List<Mob_Dungeon> mobs;
 
     public Dungeon() throws IOException {
@@ -510,7 +512,14 @@ public class Dungeon {
             case 3 -> 3;
             default -> p.get_DameBase();
         };
-        dame_atk = p.get_DameProp(clazz)* 2;
+        int damevl = p.get_DameProp(0) * 2;
+        int damephep = p.get_DameProp(clazz) *2;
+        if (damevl > damephep){
+            dame_atk = damevl;
+        }else {
+            dame_atk = damephep;
+        }
+        //dame_atk = p.get_DameProp(clazz)* 2 + p.get_DameProp(0);
         long dame = dame_atk;
         //
         EffTemplate ef = null;
@@ -598,12 +607,17 @@ public class Dungeon {
 //                    ev_he.Event_3.LeaveItemMap(map, mob, p);
 //                if(30>Util.random(1,101))
 //                    leave_item_by_type7(map, (short)Util.random(417,464), p, mob.index);
-                if(30>Util.random(0,100))
-                    Dungeon.leave_item_by_type7(map, (short)Util.random(417,464), p, mob.index);
-                if(5>Util.random(0,100))
-                    Dungeon.leave_item_by_type7(map, Medal_Material.m_blue[Util.random(Medal_Material.m_blue.length)], p, mob.index);
-                if(5>Util.random(0, 500))
-                    Dungeon.leave_item_by_type7(map, (short) Util.random(126, 146),p,mob.index);
+                if (Manager.gI().event == 4){
+                    if (20 > Util.random(0,200)){
+                        if (50 > Util.random(100))
+                            Dungeon.leave_item_by_type4(map, (short) 129,p,mob.index);
+                        else
+                            Dungeon.leave_item_by_type4(map, (short) 259,p,mob.index);
+                    }
+                }
+                p.update_vang(10000);
+                p.update_ngoc(100);
+                p.update_coin(100);
                 Message m2 = new Message(17);
                 m2.writer().writeShort(p.index);
                 m2.writer().writeShort(mob.index);
@@ -753,7 +767,31 @@ public class Dungeon {
             mi.cleanup();
         }
     }
-    
+    public static void leave_item_by_type4(Map map, short id_item, Player p_master, int index_mob) throws IOException {
+        int index_item_map = map.get_item_map_index_able();
+        if (index_item_map > -1) {
+            //
+            map.item_map[index_item_map] = new ItemMap();
+            map.item_map[index_item_map].id_item = id_item;
+            map.item_map[index_item_map].color = 0;
+            map.item_map[index_item_map].quantity = 1;
+            map.item_map[index_item_map].category = 4;
+            map.item_map[index_item_map].idmaster = (short) p_master.index;
+            map.item_map[index_item_map].time_exist = System.currentTimeMillis() + 60_000L;
+            map.item_map[index_item_map].time_pick = System.currentTimeMillis() + 1_500L;
+            // add in4 game scr
+            Message mi = new Message(19);
+            mi.writer().writeByte(4);
+            mi.writer().writeShort(index_mob); // id mob die
+            mi.writer().writeShort(ItemTemplate4.item.get(map.item_map[index_item_map].id_item).getIcon());
+            mi.writer().writeShort(index_item_map); //
+            mi.writer().writeUTF(ItemTemplate4.item.get(map.item_map[index_item_map].id_item).getName());
+            mi.writer().writeByte(0); // color
+            mi.writer().writeShort(-1); // id player
+            MapService.send_msg_player_inside(map, p_master, mi, true);
+            mi.cleanup();
+        }
+    }
     public static void leave_item_by_type7(Map map, short idItem, Player p_master, int index) throws IOException {
         int index_item_map = map.get_item_map_index_able();
         if (index_item_map > -1) {

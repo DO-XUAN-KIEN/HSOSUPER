@@ -155,9 +155,9 @@ public class MapKiemMoney {
             short sizeRandomMedal = 0;
             switch (mob.template.mob_id) {
                 case 133: {
-                    long vang = 1000;
-                    int ngoc = 10;
-                    int coin = 10;
+                    long vang = 10000;
+                    int ngoc = 100;
+                    int coin = 100;
                     p.update_vang(vang);
                     p.update_ngoc(ngoc);
                     p.update_coin(coin);

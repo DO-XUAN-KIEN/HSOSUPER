@@ -5,6 +5,7 @@ import Helps.CheckItem;
 import Helps.Save_Log;
 import History.His_COIN;
 import ev_he.*;
+import event.EventManager;
 import event.Event_1;
 
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.util.*;
 import client.Clan;
 import client.Pet;
 import client.Player;
+import event.LunarNewYear;
 import event_daily.*;
 import event_daily.st.*;
 import event_daily.sc.*;
@@ -40,6 +42,10 @@ public class MenuController {
 //            return;
 //        }
 //        System.out.println("core.MenuController.request_menu()" + idnpc);
+        if (!conn.p.isOwner && !(idnpc == -8 || idnpc == -10 || idnpc == -33 || idnpc == -55 || idnpc == -42)){
+            Service.send_notice_box(conn,"Đệ không thể tương tác!");
+            return;
+        }
         if (idnpc == -43 || idnpc == -45 || idnpc == -48 || idnpc == -46 || idnpc == -47) {
             Menu_ChangeZone(conn);
             return;
@@ -69,19 +75,15 @@ public class MenuController {
                 break;
             }
             case -1: { // admin
-                menu = new String[]{"Bảo trì", "Cộng vàng x1.000.000.000",
-                        "Cộng ngọc x1.000.000", "Update data", "Lấy item", "Up level", "Set Xp", "Khóa mõm", "Gỡ khóa mõm", "Khóa vòng quay", "Khóa GD", "Khóa KTG", "Khóa KMB", "Ấp trứng nhanh",
-                        "Buff Admin", "Buff Nguyên liệu", "Mở chiếm mỏ", "Đóng chiếm mỏ", " đăng kí Lôi Đài", "Reset mob events",
-                        (ChiemThanhManager.isRegister ? "Đóng" : "Mở") + " đăng kí chiếm thành", "Mở đăng kí chiến trường", "Dịch map", "loadconfig",
-                        (Manager.logErrorLogin ? "tắt" : "bật") + " log bug", "disconnect client", "check bug", "fix bug","Mở quà 20-10"};
+                menu = new String[]{"Shop Coin","Shop Tinh Tú","Quản Lý Server","TEST EFF"};
                 break;
             }
             case -99: { // shop_coin
-                menu = new String[]{"Cường hóa đồ tinh tú","Cường hóa mề đay","Cường hóa trang bị 1","Cường hóa trang bị 2","Săn boss cá nhân","Nâng level 140++","Đổi quà","Vào map money","Vào map Ngọc tổ","Vào map TB2"};
+                menu = new String[]{"Cường hóa mề đay","Cường hóa trang bị 1","Cường hóa trang bị 2","Săn boss cá nhân","Map up exp nhẫn","Đổi quà","Vào map money","Vào map Ngọc tổ","Vào map TB2", "Tiềm năng"};
                 break;
             }
             case -98: {
-                menu = new String[]{"Random Đồ","Random Sách","Random Trứng","Random Tóc", "Random Sao"};
+                menu = new String[]{"Random Đồ","Random Sách","Random Trứng","Random Tóc", "Random Sao", "Random Thú Cưỡi và Sách 110"};
                 break;
             }
 //              case -20: { // Lisa
@@ -121,7 +123,7 @@ public class MenuController {
                 break;
             }
             case -8: {
-                menu = new String[]{"Cửa Hàng Tóc", "Điểm danh hằng ngày", "Nhiệm vụ hàng ngày", "Đổi quà đặc biệt", "Đổi coin sang vàng", (conn.p.type_exp == 0 ? "Bật" : "Tắt") + " nhận exp", "Đổi Mật Khẩu"};
+                menu = new String[]{"Cửa Hàng Tóc", "Điểm danh hằng ngày","Nhiệm vụ hàng ngày", (conn.p.type_exp == 0 ? "Bật" : "Tắt") + " nhận exp", "Đổi Mật Khẩu"};
 //                if (conn.p.type_exp == 1) {
 //                    menu = new String[]{"Cửa Hàng Tóc", "Điểm danh hằng ngày", "Đổi coin sang ngọc", "Đổi coin sang vàng",
 //                        "Đăng ký treo chống pk", "Tgian còn lại", "Tắt nhận exp"};
@@ -132,9 +134,8 @@ public class MenuController {
                 break;
             }
             case -36: {
-                menu = new String[]{"Cường Hóa Trang Bị", "Shop Nguyên Liệu", "Chuyển hóa", "Hợp nguyên liệu mề đay",
-                    "Mề đay chiến binh", "Mề đay pháp sư", "Mề đay sát thủ", "Mề đay xạ thủ",
-                    "Đổi dòng sát thương", "Đổi dòng % sát thương", "Hợp ngọc", "Khảm ngọc", "Đục lỗ"};
+                menu = new String[]{
+                    "Đổi dòng sát thương", "Đổi dòng % sát thương", "Hợp ngọc", "Khảm ngọc", "Đục lỗ","Tạo mề đay"};
                 break;
             }
             case -44: {
@@ -148,7 +149,7 @@ public class MenuController {
             }
             case -32: {
                 menu = new String[]{"Xem BXH Danh vọng", "Xem BXH Cao Thủ", "Xem BXH Đi Buôn", "Xem BXH Đi Cướp", "Xem BXH Chiến trường",
-                    "Xem BXH Đổi quà", "Xem BXH Bang", "Xem BXH Hiếu chiến", "Xem BXH Phó Bản"};
+                    "Xem BXH Đổi quà", "Xem BXH Bang", "Xem BXH Hiếu chiến", "Xem BXH Phó Bản", "Xem BXH Đánh boss"};
                 break;
             }
             case -21: { // blackeye
@@ -219,12 +220,12 @@ public class MenuController {
 
             }
             case -41: {
-                menu = new String[]{"Tạo cánh", "Nâng cấp cánh", "Kích hoạt cánh", "Tách cánh"};
+                menu = new String[]{"Tạo cánh", "Nâng cấp cánh", "Tách cánh"};
                 break;
             }
             case -49: { //menu_top
                 // menu = new String[]{"Yêu thích", "Shop Dola","Kết Hôn", "Thông Tin Cá Nhân " , "Nhận quà hiếu chiến","BXH Top Rương", "Khu Boss"};
-                menu = new String[]{"Shop coin","Kết Hôn", "Thông Tin Cá Nhân", "Khu boss"};
+                menu = new String[]{"Kết Hôn", "Thông Tin Cá Nhân", "Khu boss"};
                 break;
             }
             case -82: {
@@ -245,12 +246,6 @@ public class MenuController {
                     //menu = new String[]{"Coming soon", infoServer.Website};
                 } else if (Manager.gI().event == 3) { // sự kiện vu lan
                     menu = new String[]{"Đổi bó sen trắng", "Đổi hoa sen hồng", "Đổi bó sen hồng", "Xem top", "Đổi con lân", "Đổi trứng khỉ nâu", "Đổi trứng tiểu yêu", "Đổi cánh thời trang"};
-                    send_menu_select(conn, -69, menu, (byte) Manager.gI().event);
-                    return;
-                    //menu = new String[]{"Coming soon", infoServer.Website};
-
-                } else if (Manager.gI().event == 4) { // sự kiện tết
-                    menu = new String[]{"Làm bánh trưng", "Làm bánh trưng đặc biệt", "Làm bánh dày", "Ghép Chữ HAPPY NEW YEAR", "Làm Pháo Hoa", "Xem Top"};
                     send_menu_select(conn, -69, menu, (byte) Manager.gI().event);
                     return;
                     //menu = new String[]{"Coming soon", infoServer.Website};
@@ -288,10 +283,19 @@ public class MenuController {
             case -62: {
                 if (Manager.gI().event == 1) {
                     menu = new String[]{"Tăng tốc nấu", "Hướng dẫn", "Thông tin", "Top Nguyên Liệu"};
+                }else if (Manager.gI().event == 4){
+                    menu = new String[]{"Thêm củi", "Thông tin"};
                 } else {
-                    Service.send_notice_box(conn, "Chưa có chức năng :(.");
+                    Service.send_notice_box(conn, "Chưa có chức năng :(...");
                     return;
                     //menu = new String[]{"Coming soon", infoServer.Website};
+                }
+                break;
+            }
+            case -63: {
+                menu = new String[]{""};
+                if (Manager.gI().event == 4) {
+                    menu = LunarNewYear.menu;
                 }
                 break;
             }
@@ -301,9 +305,17 @@ public class MenuController {
                 }
                 if (Manager.gI().event == 1) {
                     menu = new String[]{"Hoa tuyết", "Ngôi sao", "Quả châu", "Thiệp", "Top trang trí cây thông"};
+                }else if (Manager.gI().event == 4){
+                    menu = new String[]{"Top sự kiện pháo", "Top sự kiện mở quà"};
+                } else {
+                    menu = new String[]{""};
                 }
-                menu = new String[]{"Hoa tuyết", "Ngôi sao", "Quả châu", "Thiệp", "Top trang trí cây thông"};
+                //menu = new String[]{"Hoa tuyết", "Ngôi sao", "Quả châu", "Thiệp", "Top trang trí cây thông"};
                 //  menu = new String[]{"Coming soon", infoServer.Website};
+                break;
+            }
+            case -89: { //
+                menu = new String[]{"Bắn pháo"};
                 break;
             }
             case -57: {
@@ -315,11 +327,11 @@ public class MenuController {
                 break;
             }
             case -58: {
-                menu = new String[]{"Mua lạc đà", "Bán đá quý", "Đồ thương nhân"};
+                menu = new String[]{"Mua Bò", "Bán đá quý", "Đồ thương nhân"};
                 break;
             }
             case -59: {
-                menu = new String[]{"Mua lạc đà", "Bán đá quý", "Đồ cướp"};
+                menu = new String[]{"Mua Bò", "Bán đá quý", "Đồ cướp"};
                 break;
             }
             case -53: {
@@ -344,6 +356,10 @@ public class MenuController {
         byte idmenu = m.reader().readByte();
         byte index = m.reader().readByte();
         if (index < 0) {
+            return;
+        }
+        if (!conn.p.isOwner && !(idnpc == -8 || idnpc == -10 || idnpc == -33 || idnpc == -55 || idnpc ==  -42)){
+            Service.send_notice_box(conn,"Đệ không thể tương tác!!");
             return;
         }
         if (idnpc == -56) {
@@ -436,11 +452,19 @@ public class MenuController {
                 break;
             }
             case -1: {
-                Menu_Admin(conn, index);
+                Menu_AD(conn, index);
                 break;
             }
             case -99: { // shopcoin
                 Menu_shopcoin(conn, index);
+                break;
+            }
+            case 98: {
+                Menu_tiemnang(conn, index);
+                break;
+            }
+            case 97: {
+                Service.send_box_input_text(conn, (56 + index), "Nhập điểm : ", new String[]{"Nhập điểm"});
                 break;
             }
             case -98: { // quanap
@@ -471,7 +495,7 @@ public class MenuController {
                 Menu_danhhieu(conn, index);
                 break;
             }
-            case -89: { // cường hóa tb2
+            case -87: { // cường hóa tb2
                 Menu_tb1(conn, index);
                 break;
             }
@@ -655,9 +679,6 @@ public class MenuController {
                 if (Manager.gI().event == 3) { // vu lan
                     Menu_MissSophia(conn, idnpc, idmenu, index);
                 }
-                if (Manager.gI().event == 4) { // tết
-                    Menu_MissSophia(conn, idnpc, idmenu, index);
-                }
                 if (Manager.gI().event == 5) { // trung thu
                     Menu_MissSophia(conn, idnpc, idmenu, index);
                 }
@@ -681,16 +702,48 @@ public class MenuController {
             case -62: {
                 if (Manager.gI().event == 1) {
                     Menu_NauKeo(conn, index);
+                }else if (Manager.gI().event == 4){
+                    if (index == 0) {
+                        if (LunarNewYear.runing == true) {
+                            if (conn.p.get_vang() < 5000000) {
+                                Service.send_notice_box(conn, "Không đủ 5,000,000 vàng");
+                                return;
+                            }
+                            if (EventManager.time < 30){
+                                Service.send_notice_box(conn, "Không thể tăng tốc nữa");
+                                return;
+                            }
+                            conn.p.update_vang(-5_000_000L);
+                            EventManager.update(1);
+                            Service.send_notice_box(conn, "Thời gian nấu còn lại " + EventManager.time + " phút");
+                        } else {
+                            Service.send_notice_box(conn, "Chưa đến thời gian nấu");
+                        }
+                    } else if (index == 1) {
+                        EventManager.send_info(conn);
+                    }
+                }
+                break;
+            }
+            case -63: {
+                if (Manager.gI().event == 4) {
+                    Menu_Ong_Do(conn, index);
                 }
                 break;
             }
             case -66: {
                 if (Manager.gI().event == 1) {
                     Menu_CayThong(conn, index);
+                }else if (Manager.gI().event == 4){
+                    Menu_CayLeu(conn,index);
                 }
                 if (Manager.gI().event == 8){
                     return;
                 }
+                break;
+            }
+            case -89: {
+                LunarNewYear.ban_phao(conn);
                 break;
             }
             case 120: {
@@ -769,7 +822,7 @@ public class MenuController {
             case 0: {
                 switch (index) {
                     case 0: { // dang ky
-                        if (ChienTruong.gI().getStatus() == 1) {
+                        if (ChienTruong.gI().getStatus() == 2) {
                             ChienTruong.gI().register(conn.p);
                         } else {
                             Service.send_notice_box(conn, "Không trong thời gian diễn ra");
@@ -812,7 +865,7 @@ public class MenuController {
                             Service.send_notice_box(conn,"Không đủ điểm");
                             return;
                         }
-                        conn.p.update_point_arena(-10000);
+                        conn.p.pointarena -= 10000;
                         int ran = Util.random(0,100);
                         List<box_item_template> ids = new ArrayList<>();
                         if (conn.ac_admin > 111){
@@ -1125,6 +1178,33 @@ public class MenuController {
             e.printStackTrace();
         }
     }
+    private static void Menu_AD(Session conn, byte index) throws IOException{
+        if (conn.ac_admin < 111){
+            return;
+        }
+        switch (index){
+            case 0: {
+                Service.send_box_UI(conn, 37);
+                break;
+            }
+            case 1: {
+                Service.send_box_UI(conn, 48);
+                break;
+            }
+            case 2: {
+                send_menu_select(conn, 126, new String[]{"Bảo trì", "Cộng vàng x1.000.000.000",
+                        "Cộng ngọc x1.000.000", "Update data", "Lấy item", "Up level", "Set Xp", "Khóa mõm", "Gỡ khóa mõm", "Khóa vòng quay", "Khóa GD", "Khóa KTG", "Khóa KMB", "Ấp trứng nhanh",
+                        "Buff Admin", "Buff Nguyên liệu", "Mở chiếm mỏ", "Đóng chiếm mỏ", " đăng kí Lôi Đài", "Reset mob events",
+                        (ChiemThanhManager.isRegister ? "Đóng" : "Mở") + " đăng kí chiếm thành", "Mở đăng kí chiến trường", "Dịch map", "loadconfig",
+                        (Manager.logErrorLogin ? "tắt" : "bật") + " log bug", "disconnect client", "check bug", "fix bug"});
+                break;
+            }
+            case 3: {
+                conn.p.Sen_eff_111(conn.p, (byte) 126);
+                break;
+            }
+        }
+    }
     public static Leo_thap d;
     private static void Menu_shopcoin(Session conn, byte index) throws IOException{
         if (!conn.p.isOwner){
@@ -1133,22 +1213,18 @@ public class MenuController {
         conn.p.ResetCreateItemStar();
         switch (index){
             case 0: {
-                send_menu_select(conn, -96,new String[]{"Hướng dẫn","Tiến hóa đồ tinh tú"});
-                break;
-            }
-            case 1: {
                 send_menu_select(conn, -95,new String[]{"Hướng dẫn","Tiến hóa mề đay"});
                 break;
             }
-            case 2: {
-                send_menu_select(conn, -89,new String[]{"Hướng dẫn","Cường hóa trang bị 1"});
+            case 1: {
+                send_menu_select(conn, -87,new String[]{"Hướng dẫn","Cường hóa trang bị 1"});
                 break;
             }
-            case 3: {
+            case 2: {
                 send_menu_select(conn, -94,new String[]{"Hướng dẫn","Cường hóa trang bị 2"});
                 break;
             }
-            case 4: {
+            case 3: {
                 if(d == null) {
                     if (conn.p.item.total_item_by_id(4, 342) <= 0) {
                         Service.send_notice_box(conn, "Không có vé săn boss");
@@ -1159,28 +1235,45 @@ public class MenuController {
                 send_menu_select(conn,-97,new String[]{"Mức độ dễ","Mức độ trung bình-dễ","Mức độ trung bình","Mức độ khó","Mức độ khó[VIP PRO]"});
                 break;
             }
-            case 5: {
-                if (conn.p.level < 140){
+            case 4: {
+                if (conn.p.item.wear[23] == null){
+                    Service.send_notice_box(conn,"Kết hôn mới vào được map");
                     return;
                 }
-                Vgo v = new Vgo();
-                v.id_map_go = 137;
-                v.x_new = 396;
-                v.y_new = 390;
-                conn.p.change_map(conn.p, v);
+                if ((conn.p.chuyencan > 0 && conn.ac_admin < 111) && conn.p.get_EffDefault(-226) == null){
+                    Service.send_notice_box(conn, "Hôm nay đã hết lượt đi hãy quay lại vào ngày mai");
+                    return;
+                }
+                if (conn.p.get_EffDefault(-226) != null) {
+                    Vgo v = new Vgo();
+                    v.id_map_go = 137;
+                    v.x_new = 396;
+                    v.y_new = 390;
+                    conn.p.change_map(conn.p, v);
+                }else {
+                    conn.p.add_EffDefault(-226, 1, 3 * 60 * 60 * 1000);
+                    Vgo v = new Vgo();
+                    v.id_map_go = 137;
+                    v.x_new = 396;
+                    v.y_new = 390;
+                    conn.p.change_map(conn.p, v);
+                }
+                conn.p.chuyencan += 11;
+                EffTemplate eff = conn.p.get_EffDefault(-226);
+                Service.send_time_box(conn.p, (byte) 1, new short[]{(short) ((eff.time - System.currentTimeMillis()) / 1000)}, new String[]{"Time còn lại"});
+                break;
+            }
+            case 5: {
+                send_menu_select(conn,-92,new String[]{"Check điểm HD","Đổi vàng, ngọc, coin, vé kmb từ điểm HD","Đổi danh hiệu mốc level 1000","Đổi danh hiệu mốc level 2000",
+                        "Đổi danh hiệu mốc level 3000","Đổi danh hiệu mốc level 4000","Đổi danh hiệu mốc level 5000","Đổi danh hiệu mốc level 6000",
+                        "Đổi danh hiệu mốc level 7000","Đổi danh hiệu mốc level 8000","Đổi danh hiệu mốc level 9000","Đổi danh hiệu mốc level 10000","Đổi quà đánh boss"});
                 break;
             }
             case 6: {
-                send_menu_select(conn,-92,new String[]{"Check điểm HD","Đổi vàng, ngọc, coin, vé kmb từ điểm HD","Đổi danh hiệu mốc level 1000","Đổi danh hiệu mốc level 2000",
-                        "Đổi danh hiệu mốc level 3000","Đổi danh hiệu mốc level 4000","Đổi danh hiệu mốc level 5000","Đổi danh hiệu mốc level 6000",
-                        "Đổi danh hiệu mốc level 7000","Đổi danh hiệu mốc level 8000","Đổi danh hiệu mốc level 9000","Đổi danh hiệu mốc level 10000"});
-                break;
-            }
-            case 7: {
                 MapKiemMoney.gI().register(conn.p);
                 break;
             }
-            case 8: {
+            case 7: {
                 if (Mobngoc.runing == false){
                     Service.send_notice_box(conn,"Chưa đến thời gian tham gia");
                     return;
@@ -1193,7 +1286,7 @@ public class MenuController {
                 conn.p.change_map(conn.p, vgo);
                 break;
             }
-            case 9: {
+            case 8: {
                 if (Mobtb2.runing == false){
                     Service.send_notice_box(conn,"Chưa đến thời gian tham gia");
                     return;
@@ -1206,37 +1299,61 @@ public class MenuController {
                 conn.p.change_map(conn.p, vgo);
                 break;
             }
-            case 10: {
-                EffTemplate ef2 = conn.p.get_eff(-125);
-                EffTemplate ef3 = conn.p.get_EffDefault(-222);
-                EffTemplate ef4 = conn.p.get_EffDefault(-223);
-                EffTemplate ef5 = conn.p.get_EffDefault(-224);
-                EffTemplate ef10 = conn.p.get_EffDefault(-225);
-                if (ef2 != null && ef2.time > System.currentTimeMillis()) {
-                    Service.send_notice_box(conn,
-                            "Thời gian còn lại : " + Util.getTime((int) (ef2.time - System.currentTimeMillis()) / 1000));
-                }else if (ef3 != null && ef3.time > System.currentTimeMillis()){
-                    Service.send_notice_box(conn,
-                            "Thời gian còn lại : " + Util.getTime((int) (ef3.time - System.currentTimeMillis()) / 1000));
-                }else if (ef4 != null && ef4.time > System.currentTimeMillis()){
-                    Service.send_notice_box(conn,
-                            "Thời gian còn lại : " + Util.getTime((int) (ef4.time - System.currentTimeMillis()) / 1000));
-                }else if (ef5 != null && ef5.time > System.currentTimeMillis()){
-                    Service.send_notice_box(conn,
-                            "Thời gian còn lại : " + Util.getTime((int) (ef5.time - System.currentTimeMillis()) / 1000));
-                }else if (ef10!= null && ef10.time > System.currentTimeMillis()){
-                    Service.send_notice_box(conn,
-                            "Thời gian còn lại : " + Util.getTime((int) (ef10.time - System.currentTimeMillis()) / 1000));
-                }
+            case 9: {
+                send_menu_select(conn, 98,new String[]{"Cộng tiềm năng","Xem điểm tiềm năng"});
                 break;
             }
+//            case 9: {
+//                EffTemplate ef2 = conn.p.get_eff(-125);
+//                EffTemplate ef3 = conn.p.get_EffDefault(-222);
+//                EffTemplate ef4 = conn.p.get_EffDefault(-223);
+//                EffTemplate ef5 = conn.p.get_EffDefault(-224);
+//                EffTemplate ef10 = conn.p.get_EffDefault(-225);
+//                if (ef2 != null && ef2.time > System.currentTimeMillis()) {
+//                    Service.send_notice_box(conn,
+//                            "Thời gian còn lại : " + Util.getTime((int) (ef2.time - System.currentTimeMillis()) / 1000));
+//                }else if (ef3 != null && ef3.time > System.currentTimeMillis()){
+//                    Service.send_notice_box(conn,
+//                            "Thời gian còn lại : " + Util.getTime((int) (ef3.time - System.currentTimeMillis()) / 1000));
+//                }else if (ef4 != null && ef4.time > System.currentTimeMillis()){
+//                    Service.send_notice_box(conn,
+//                            "Thời gian còn lại : " + Util.getTime((int) (ef4.time - System.currentTimeMillis()) / 1000));
+//                }else if (ef5 != null && ef5.time > System.currentTimeMillis()){
+//                    Service.send_notice_box(conn,
+//                            "Thời gian còn lại : " + Util.getTime((int) (ef5.time - System.currentTimeMillis()) / 1000));
+//                }else if (ef10!= null && ef10.time > System.currentTimeMillis()){
+//                    Service.send_notice_box(conn,
+//                            "Thời gian còn lại : " + Util.getTime((int) (ef10.time - System.currentTimeMillis()) / 1000));
+//                }
+//                break;
+//            }
             default:{
                 Service.send_notice_box(conn,"Chưa có chức năng!!!");
                 break;
             }
         }
     }
-    private static void     Menu_random(Session conn, byte index) throws IOException{
+    private static void Menu_tiemnang(Session conn, byte index) throws IOException{
+        switch (index){
+            case 0: {
+                send_menu_select(conn, 97, new String[]{"Sức mạnh", "Khéo léo", "Thể lực", "Tinh thần"});
+                break;
+            }
+            case 1: {
+                Service.send_notice_box(conn, "Điểm Tiểm Năng :" + conn.p.tiemnang + "."
+                        + "\n Sức Mạnh: " + conn.p.point1
+                        + "\n Khéo Léo: " + conn.p.point2
+                        + "\n Thể Lực: " + conn.p.point3
+                        + "\n Tinh Thần: " + conn.p.point4);
+                break;
+            }
+            default: {
+                Service.send_notice_box(conn,"Chưa có chức năng...");
+                break;
+            }
+        }
+    }
+    private static void Menu_random(Session conn, byte index) throws IOException{
         switch (index){
             case 0: {
                 if (conn.p.checkcoin() < 500 || conn.p.get_ngoc() < 50 || conn.p.get_vang() < 50000){
@@ -1248,9 +1365,9 @@ public class MenuController {
                 conn.p.update_coin(-500);
                 int ran = Util.random(0,100);
                 List<box_item_template> ids = new ArrayList<>();
-                List<Integer> item3 = new ArrayList<>(java.util.Arrays.asList(4679, 4682, 4685, 4688, 4792));
-                List<Integer> item4 = new ArrayList<>(java.util.Arrays.asList(205, 206, 207, 357, 358, 359, 360, 361, 362, 363));
-                List<Integer> item7 = new ArrayList<>(java.util.Arrays.asList(8, 9, 10, 11, 33, 44, 45));
+                List<Integer> item3 = new ArrayList<>(Arrays.asList(4679, 4682, 4685, 4688, 4792));
+                List<Integer> item4 = new ArrayList<>(Arrays.asList(206, 357, 358, 359, 360, 361, 362, 363));
+                List<Integer> item7 = new ArrayList<>(Arrays.asList(8, 9, 10, 11, 33, 44, 45));
                 if (conn.ac_admin > 111){
                     ran = 99;
                 }
@@ -1329,10 +1446,10 @@ public class MenuController {
                 conn.p.update_coin(-100_000);
                 int ran = Util.random(0,100);
                 List<box_item_template> ids = new ArrayList<>();
-                List<Integer> xin = new ArrayList<>(java.util.Arrays.asList(4708, 3269));
-                List<Integer> trung = new ArrayList<>(java.util.Arrays.asList(3616, 4699, 4622));
-                List<Integer> vua = new ArrayList<>(java.util.Arrays.asList(4631, 4761, 4762, 4768));
-                List<Integer> rac = new ArrayList<>(java.util.Arrays.asList(2939, 2943, 2944));
+                List<Integer> xin = new ArrayList<>(Arrays.asList(4708, 3269));
+                List<Integer> trung = new ArrayList<>(Arrays.asList(3616, 4699, 4622));
+                List<Integer> vua = new ArrayList<>(Arrays.asList(4631, 4761, 4762, 4768));
+                List<Integer> rac = new ArrayList<>(Arrays.asList(2939, 2943, 2944));
                 if (conn.ac_admin > 111){
                     ran = 99;
                 }
@@ -1371,8 +1488,8 @@ public class MenuController {
                 conn.p.update_coin(-100_000);
                 int ran = Util.random(0,100);
                 List<box_item_template> ids = new ArrayList<>();
-                List<Integer> tocxin = new ArrayList<>(java.util.Arrays.asList(4700, 4703, 4704, 4705, 4706));
-                List<Integer> tocrac = new ArrayList<>(java.util.Arrays.asList(4897, 4898, 4899, 4900, 4901));
+                List<Integer> tocxin = new ArrayList<>(Arrays.asList(4700, 4703, 4704, 4705, 4706));
+                List<Integer> tocrac = new ArrayList<>(Arrays.asList(4897, 4898, 4899, 4900, 4901));
                 if (conn.ac_admin > 111){
                     ran = 99;
                 }
@@ -1392,7 +1509,7 @@ public class MenuController {
                 if (conn.p.item.total_item_by_id(4, 359) < 100 || conn.p.item.total_item_by_id(4, 360) < 100 ||
                     conn.p.item.total_item_by_id(4, 361) < 100 || conn.p.item.total_item_by_id(4, 362) < 100 ||
                     conn.p.item.total_item_by_id(4, 363) < 100){
-                    Service.send_notice_box(conn,"Bạn không đủ 50 mảnh sao mỗi loại");
+                    Service.send_notice_box(conn,"Bạn không đủ 100 mảnh sao mỗi loại");
                     return;
                 }
                 if (conn.p.get_vang() < 1_000_000 || conn.p.get_ngoc() < 1000 || conn.p.checkcoin() < 10000){
@@ -1436,6 +1553,44 @@ public class MenuController {
                 Service.Show_open_box_notice_item(conn.p, "Bạn nhận được", ids);
                 break;
             }
+            case 5: {
+                if (conn.p.item.total_item_by_id(4, 377) < 1){
+                    Service.send_notice_box(conn,"Bạn không đủ 1 vé quay");
+                    return;
+                }
+                conn.p.item.remove(4, 377, 1);
+                int ran = Util.random(0,100);
+                List<box_item_template> ids = new ArrayList<>();
+                List<Integer> sach110 = new ArrayList<>(Arrays.asList(4577, 4578, 4579, 4580, 4581, 4582, 4583, 4584));
+                List<Integer> xin = new ArrayList<>(Arrays.asList(124, 222, 246, 279, 294, 323));
+                List<Integer> vua = new ArrayList<>(Arrays.asList(251, 269, 271, 275, 281, 299, 301));
+                List<Integer> rac = new ArrayList<>(Arrays.asList(62, 63, 64, 65, 66));
+                if (conn.ac_admin > 111){
+                    ran = 99;
+                }
+                if (ran == 99){
+                    short id = Util.random(sach110, new ArrayList<>()).shortValue();
+                    ids.add(new box_item_template(id, (short) 1, (byte) 3));
+                    conn.p.item.add_item_bag3_default(id, 0, false);
+                }else if (ran >= 95){
+                    short id = Util.random(xin, new ArrayList<>()).shortValue();
+                    short quant = 1;
+                    ids.add(new box_item_template(id, quant, (byte) 4));
+                    conn.p.item.add_item_bag47(id, quant, (byte) 4);
+                }else if (ran < 95 && ran > 60){
+                    short id = Util.random(vua, new ArrayList<>()).shortValue();
+                    short quant = 1;
+                    ids.add(new box_item_template(id, quant, (byte) 4));
+                    conn.p.item.add_item_bag47(id, quant, (byte) 4);
+                }else {
+                    short id = Util.random(rac, new ArrayList<>()).shortValue();
+                    short quant = 1;
+                    ids.add(new box_item_template(id, quant, (byte) 4));
+                    conn.p.item.add_item_bag47(id, quant, (byte) 4);
+                }
+                Service.Show_open_box_notice_item(conn.p, "Bạn nhận được", ids);
+                break;
+            }
         }
     }
     private static void Menu_danhhieu(Session conn, byte index) throws IOException{
@@ -1445,7 +1600,7 @@ public class MenuController {
                 break;
             }
             case 1: {
-                send_menu_select(conn, -88, new String[]{"Đổi 500.000 vàng","Đổi 500 ngọc","Đổi 5.000 coin","Đổi 1 vé đk bán đồ"});
+                send_menu_select(conn, -88, new String[]{"Hướng Dẫn","Đổi vàng, ngọc, coin, vé KMB or vé quay thú+sách 110"});
                 break;
             }
             case 2: {
@@ -1558,6 +1713,43 @@ public class MenuController {
                 Service.Show_open_box_notice_item(conn.p,"Bạn nhận được", new short[]{id},new int[]{1}, new short[]{3});
                 break;
             }
+            case 12: {
+                if (conn.p.mm_tt < 10){
+                    Service.send_notice_box(conn,"Trên 10 điểm mới đổi đc");
+                    return;
+                }
+                if (conn.p.mm_md >= 1){
+                    Service.send_notice_box(conn,"Hôm nay bạn đã nhận quà rồi. Ngày mai quay lại nhé!!");
+                    return;
+                }
+                if (conn.p.mm_tt >= 10 && conn.p.mm_tt <= 30){
+                    short id = 377;
+                    short quant = 2;
+                    conn.p.update_coin(5000);
+                    conn.p.item.add_item_bag47(id, quant, (byte) 4);
+                    Service.Show_open_box_notice_item(conn.p, "Bạn nhận được", new short[]{id}, new int[]{quant}, new short[]{4});
+                }else if (conn.p.mm_tt >= 40 && conn.p.mm_tt <= 60){
+                    short id = 377;
+                    short quant = 4;
+                    conn.p.update_coin(10000);
+                    conn.p.item.add_item_bag47(id, quant, (byte) 4);
+                    Service.Show_open_box_notice_item(conn.p, "Bạn nhận được", new short[]{id}, new int[]{quant}, new short[]{4});
+                }else if (conn.p.mm_tt >= 70 && conn.p.mm_tt <= 90){
+                    short id = 377;
+                    short quant = 6;
+                    conn.p.update_coin(15000);
+                    conn.p.item.add_item_bag47(id, quant, (byte) 4);
+                    Service.Show_open_box_notice_item(conn.p, "Bạn nhận được", new short[]{id}, new int[]{quant}, new short[]{4});
+                }else if (conn.p.mm_tt >= 100){
+                    short id = 377;
+                    short quant = 10;
+                    conn.p.update_coin(20000);
+                    conn.p.item.add_item_bag47(id, quant, (byte) 4);
+                    Service.Show_open_box_notice_item(conn.p, "Bạn nhận được", new short[]{id}, new int[]{quant}, new short[]{4});
+                }
+                conn.p.mm_md += 11;
+                break;
+            }
             default:{
                 Service.send_notice_box(conn,"Không có quà gì hết");
                 break;
@@ -1567,45 +1759,17 @@ public class MenuController {
     private static void Menu_doimoney(Session conn, byte index) throws IOException{
         switch (index){
             case 0: {
-                if (conn.p.check_HD() < 1){
-                    Service.send_notice_box(conn,"1 điểm còn ko có thì đổi đc cái gì");
-                    return;
-                }
-                conn.p.update_HD(-1);
-                conn.p.update_vang(500000);
-                Service.send_notice_box(conn,"Bạn nhận được 500.000 vàng");
+                Service.send_notice_box(conn,"Các bạn có thể qua type với các type như sau:\n"
+                        +"type 0: Đổi vàng\t 1Đ đổi được 500k vàng\n"
+                        +"type 1: Đổi ngọc\t 1Đ đổi được 500 ngọc\n"
+                        +"type 2: Đổi coin\t 1Đ đổi được 5k coin\n"
+                        +"type 3: Đổi vé KMB 2Đ đổi được 1 vé KMB\n"
+                        +"type 4: Đổi vé quay thú cưỡi và sách110\t 1Đ đổi được 1 vé quay\n"
+                );
                 break;
             }
             case 1: {
-                if (conn.p.check_HD() < 1){
-                    Service.send_notice_box(conn,"1 điểm còn ko có thì đổi đc cái gì");
-                    return;
-                }
-                conn.p.update_HD(-1);
-                conn.p.update_ngoc(500);
-                Service.send_notice_box(conn,"Bạn nhận được 500 ngọc");
-                break;
-            }
-            case 2: {
-                if (conn.p.check_HD() < 1){
-                    Service.send_notice_box(conn,"1 điểm còn ko có thì đổi đc cái gì");
-                    return;
-                }
-                conn.p.update_HD(-1);
-                conn.p.update_coin(5000);
-                Service.send_notice_box(conn,"Bạn nhận được 5.000 coin");
-                break;
-            }
-            case 3: {
-                if (conn.p.check_HD() < 2){
-                    Service.send_notice_box(conn,"2 điểm còn ko có thì đổi đc cái gì");
-                    return;
-                }
-                conn.p.update_HD(-2);
-                short id = 135;
-                short quant = 1;
-                conn.p.item.add_item_bag47(id, quant, (byte) 4);
-                Service.Show_open_box_notice_item(conn.p, "Bạn nhận được", new short[]{id}, new int[]{quant}, new short[]{4});
+                Service.send_box_input_text(conn, 63, "Đổi điểm hoạt động", new String[]{"Nhập type","Nhập số lượng cần đổi"});
                 break;
             }
             default: {
@@ -2079,6 +2243,9 @@ public class MenuController {
 //            }
 //        }
 //    }
+    private static void Menu_Ong_Do(Session conn, byte index) throws IOException {
+        LunarNewYear.Menu(conn,index);
+    }
     private static void Menu_MissSophia(Session conn, int idNPC, byte idmenu, byte index) throws IOException {
 //        System.out.println("core.MenuController.Menu_MissSophia() id: "+idmenu);
 //        System.out.println("core.MenuController.Menu_MissSophia() idx: "+index);
@@ -2183,7 +2350,7 @@ public class MenuController {
                     List<box_item_template> ids = new ArrayList<>();
                     conn.p.item.remove(4, 123, 5);
                     List<Integer> it = new ArrayList<>(Arrays.asList(4612, 4632, 4633, 4634, 4635));
-                    List<Integer> it4 = new ArrayList<>(Arrays.asList(299, 205, 207));
+                    List<Integer> it4 = new ArrayList<>(Arrays.asList(299));
                     if (Util.random(100) < 60) {
                         short id = Util.random(it4, new ArrayList<>()).shortValue();
                         short quant = (short) Util.random(1, 3);
@@ -2500,136 +2667,6 @@ public class MenuController {
                     send_menu_select(conn, 120, Event_8.get_top());
                     break;
                 }
-                case 3: {
-                    if (Manager.gI().bossTG.p.isDie) {
-                        Service.send_notice_box(conn, "Chưa thể vào map thời gian này!");
-                        return;
-                    }
-                    boolean enter = true;
-                    long t = 0;
-                    if (Manager.gI().bossTG.time_enter_map.containsKey(conn.p.name)) {
-                        t = Manager.gI().bossTG.time_enter_map.get(conn.p.name);
-                        if (t > System.currentTimeMillis()) {
-                            enter = false;
-                        }
-                    } else {
-                        Manager.gI().bossTG.time_enter_map.put(conn.p.name, 0L);
-                    }
-                    if (enter) {
-                        MapService.leave(conn.p.map, conn.p);
-                        conn.p.map = Manager.gI().bossTG.map;
-                        conn.p.x = 504;
-                        conn.p.y = 288;
-                        MapService.enter(conn.p.map, conn.p);
-                    } else {
-                        Service.send_notice_box(conn, "Hãy chờ " + ((t - System.currentTimeMillis()) / 1000) + " s để vào lại");
-                    }
-                    break;
-                }
-                case 4: {
-                    if (Manager.gI().bossTG.top_dame.size() > 1) {
-                        Collections.sort(Manager.gI().bossTG.top_dame, new Comparator<Top_Dame>() {
-                            @Override
-                            public int compare(Top_Dame o1, Top_Dame o2) {
-                                return (o1.dame > o2.dame) ? -1 : 1;
-                            }
-                        });
-                    }
-                    String[] list = new String[]{"Trống"};
-                    if (Manager.gI().bossTG.top_dame.size() > 0) {
-                        int size = Manager.gI().bossTG.top_dame.size();
-                        list = new String[(size > 10) ? 10 : size];
-                        for (int i = 0; i < list.length; i++) {
-                            list[i] = "Top " + (i + 1) + " : " + Manager.gI().bossTG.top_dame.get(i).name + " "
-                                    + String.format("%.02f", ((float) Manager.gI().bossTG.top_dame.get(i).dame / 1_000_000f)) + "m";
-                        }
-                    }
-                    send_menu_select(conn, 120, list);
-                    break;
-                }
-                case 5: {
-                    if (!Manager.gI().bossTG.p.isDie) {
-                        Service.send_notice_box(conn, "Chưa thể nhận vào thời gian này!");
-                        return;
-                    }
-                    Top_Dame td = null;
-                    for (int i = 0; i < Manager.gI().bossTG.top_dame.size(); i++) {
-                        if (i >= 10) {
-                            break;
-                        }
-                        Top_Dame td2 = Manager.gI().bossTG.top_dame.get(i);
-                        if (td2.name.equals(conn.p.name)) {
-                            if (!td2.receiv) {
-                                td = td2;
-                                break;
-                            } else {
-                                Service.send_notice_box(conn, "Đã nhận rồi, khôn vừa thôi!");
-                                return;
-                            }
-                        }
-                    }
-                    if (td != null) {
-                        if (conn.p.item.get_bag_able() < 3) {
-                            Service.send_notice_box(conn, "Hành trang không đủ chỗ!");
-                            return;
-                        }
-                        switch (Manager.gI().bossTG.top_dame.indexOf(td)) {
-                            case 0: {
-                                List<Integer> item = new ArrayList<>(java.util.Arrays.asList(353, 354));
-                                if (Util.random(0,100) < 5){
-                                    short id = 274;
-                                    short quant = 1;
-                                    conn.p.item.add_item_bag47(id, quant, (byte) 4);
-                                    Service.Show_open_box_notice_item(conn.p, "Bạn nhận được", new short[]{id}, new int[]{quant}, new short[]{4});
-                                }
-                                conn.p.update_vang(30_000_000);
-                                conn.p.update_coin(100_000);
-                                short id = Util.random(item, new ArrayList<>()).shortValue();
-                                short quant = 5;
-                                conn.p.item.add_item_bag47(id, quant, (byte) 4);
-                                Service.Show_open_box_notice_item(conn.p, "Bạn nhận được", new short[]{id}, new int[]{quant}, new short[]{4});
-                                break;
-                            }
-                            case 1: {
-                                conn.p.update_vang(20_000_000);
-                                List<Integer> item = new ArrayList<>(java.util.Arrays.asList(356, 355));
-                                short id = Util.random(item, new ArrayList<>()).shortValue();
-                                short quant = 5;
-                                conn.p.item.add_item_bag47(id, quant, (byte) 4);
-                                Service.Show_open_box_notice_item(conn.p, "Bạn nhận được", new short[]{id}, new int[]{quant}, new short[]{4});
-                                break;
-                            }
-                            case 2: {
-                                conn.p.update_vang(10_000_000);
-                                List<Integer> item = new ArrayList<>(java.util.Arrays.asList(356, 355));
-                                short id = Util.random(item, new ArrayList<>()).shortValue();
-                                short quant = 2;
-                                conn.p.item.add_item_bag47(id, quant, (byte) 4);
-                                Service.Show_open_box_notice_item(conn.p, "Bạn nhận được", new short[]{id}, new int[]{quant}, new short[]{4});
-                                break;
-                            }
-                            case 3:
-                            case 4:
-                            case 5:
-                            case 6:
-                            case 7:
-                            case 8:
-                            case 9: {
-//                                List<Integer> item = new ArrayList<>(java.util.Arrays.asList(356));
-                                conn.p.update_vang(1_000_000);
-                                short id = 356;
-                                short quant = 2;
-                                conn.p.item.add_item_bag47(id, quant, (byte) 4);
-                                Service.Show_open_box_notice_item(conn.p, "Bạn nhận được", new short[]{id}, new int[]{quant}, new short[]{4});
-                                break;
-                            }
-                        }
-                        td.receiv = true;
-                    } else {
-                        Service.send_notice_box(conn, "Không có trong top mà đòi nhận thưởng cái éo gì?");
-                    }
-                    break;
-                }
                 default:
                     Service.send_notice_box(conn, "Chưa có chức năng ev8!");
                     break;
@@ -2867,8 +2904,8 @@ public class MenuController {
                 mob.setOwner(conn.p);
                 int ran = Util.random(0, 100);
                 List<box_item_template> ids = new ArrayList<>();
-                List<Integer> item4 = new ArrayList<>(java.util.Arrays.asList(205, 206, 207, 357, 358, 359, 360, 361, 362, 363));
-                List<Integer> item7 = new ArrayList<>(java.util.Arrays.asList(8, 9, 10, 11, 33, 44, 45));
+                List<Integer> item4 = new ArrayList<>(Arrays.asList(206, 357, 358, 359, 360, 361, 362, 363));
+                List<Integer> item7 = new ArrayList<>(Arrays.asList(8, 9, 10, 11, 33, 44, 45));
                 if (conn.ac_admin > 111) {
                     ran = 99;
                 }
@@ -2987,7 +3024,7 @@ public class MenuController {
         {
             GameSrc.UpgradeMedal(conn, index);
         } else if (idmenu == 1) {
-            GameSrc.UpgradeItemStar(conn, index);
+            GameSrc.UpgradeItemStar(conn);
         }
         conn.p.id_Upgrade_Medal_Star = -1;
     }
@@ -3163,7 +3200,7 @@ public class MenuController {
                     if (conn.p.squire != null) {
                         conn.p.squire.switchToSquire(conn.p);
                     } else {
-                        Service.send_box_input_yesno(conn, -127, "Bạn muốn nhận đệ tử với giá 100_000 coin?");
+                        Service.send_box_input_yesno(conn, -127, "Bạn muốn nhận đệ tử với giá 1_000_000 coin?");
                     }
                     break;
                 }
@@ -3288,17 +3325,17 @@ public class MenuController {
                     for (int i = 0; i < conn.p.pet_di_buon.item.size(); i++) {
                         if (conn.p.item.total_item_by_id(4, 147) >0) {
                             if (null != conn.p.pet_di_buon.item.get(i)) switch (conn.p.pet_di_buon.item.get(i)) {
-                                case 3590 -> vang_recei += 400_000;
-                                case 3591 -> vang_recei += 800_000;
-                                case 3592 -> vang_recei += 1_600_000;
+                                case 3590 -> vang_recei += 200_000;
+                                case 3591 -> vang_recei += 300_000;
+                                case 3592 -> vang_recei += 600_000;
                                 default -> {
                                 }
                             }
                         }else {
                             if (null != conn.p.pet_di_buon.item.get(i)) switch (conn.p.pet_di_buon.item.get(i)) {
-                                case 3590 -> vang_recei += 200_000;
-                                case 3591 -> vang_recei += 400_000;
-                                case 3592 -> vang_recei += 800_000;
+                                case 3590 -> vang_recei += 100_000;
+                                case 3591 -> vang_recei += 200_000;
+                                case 3592 -> vang_recei += 400_000;
                                 default -> {
                                 }
                             }
@@ -3379,7 +3416,7 @@ public class MenuController {
         if (!conn.p.isOwner) {
             return;
         }
-        if (conn.p.map.map_id != 8) {
+        if (conn.p.map.map_id != 20) {
             return;
         }
         switch (index) {
@@ -3398,13 +3435,13 @@ public class MenuController {
                             if (conn.p.item.total_item_by_id(4, 147) >0) {
                                 if (null != conn.p.pet_di_buon.item.get(i)) switch (conn.p.pet_di_buon.item.get(i)) {
                                     case 3590:
-                                        vang_recei += 400_000;
+                                        vang_recei += 200_000;
                                         break;
                                     case 3591:
-                                        vang_recei += 800_000;
+                                        vang_recei += 300_000;
                                         break;
                                     case 3592:
-                                        vang_recei += 1_600_000;
+                                        vang_recei += 600_000;
                                         break;
                                     default:
                                         break;
@@ -3412,13 +3449,13 @@ public class MenuController {
                             }else {
                                 if (null != conn.p.pet_di_buon.item.get(i)) switch (conn.p.pet_di_buon.item.get(i)) {
                                     case 3590:
-                                        vang_recei += 200_000;
+                                        vang_recei += 100_000;
                                         break;
                                     case 3591:
-                                        vang_recei += 400_000;
+                                        vang_recei += 200_000;
                                         break;
                                     case 3592:
-                                        vang_recei += 800_000;
+                                        vang_recei += 400_000;
                                         break;
                                     default:
                                         break;
@@ -3762,119 +3799,19 @@ public class MenuController {
         }
         if (idmenu == 0) {
             switch (index) {
-            case 0: {
-                Service.send_box_UI(conn, 37);
-                break;
-            }
-                case 1: {
+                case 0: {
                     if (conn.p.level < 50) {
                         Service.send_notice_box(conn, "Yêu cầu level trên 50");
                         return;
                     }
-                    send_menu_select(conn, 114, new String[]{"Cầu hôn", "Ly hôn","Nâng cấp nhẫn", "Hướng dẫn"});
+                    send_menu_select(conn, 114, new String[]{"Cầu hôn","Nâng cấp nhẫn","Hướng dẫn"});
                     break;
                 }
-                case 2: {
+                case 1: {
                     send_menu_select(conn, 115, new String[]{"Chest Thông Tin Tài Khoản", "Thông Tin Bản Thân"});
                     break;
                 }
-//            case 4: {
-//                if (conn.p.hieuchien < 1000) {
-//                    Service.send_notice_box(conn, "Chưa đủ 1000 điểm pk");
-//                    return;
-//                }
-//                conn.p.hieuchien -= 1000;
-//                int random = Util.random(100);
-//                if (random < 10) {
-//                    short id_ = 4718;
-//                    Item3 itbag = new Item3();
-//                    itbag.id = id_;
-//                    itbag.name = ItemTemplate3.item.get(id_).getName();
-//                    itbag.clazz = ItemTemplate3.item.get(id_).getClazz();
-//                    itbag.type = ItemTemplate3.item.get(id_).getType();
-//                    itbag.level = ItemTemplate3.item.get(id_).getLevel();
-//                    itbag.icon = ItemTemplate3.item.get(id_).getIcon();
-//                    itbag.op = ItemTemplate3.item.get(id_).getOp();
-//                    itbag.color = ItemTemplate3.item.get(id_).getColor();
-//                    itbag.part = ItemTemplate3.item.get(id_).getPart();
-//                    itbag.tier = 0;
-//                    itbag.islock = false;
-//                    itbag.time_use = 0;
-//                    conn.p.item.add_item_bag3(itbag);
-//                    conn.p.item.char_inventory(3);
-//                    Service.send_notice_box(conn, "Nhận được " + itbag.name);
-//                    return;
-//                } else if (random > 10 && random < 20) {
-//                    short id_ = 4719;
-//                    Item3 itbag = new Item3();
-//                    itbag.id = id_;
-//                    itbag.name = ItemTemplate3.item.get(id_).getName();
-//                    itbag.clazz = ItemTemplate3.item.get(id_).getClazz();
-//                    itbag.type = ItemTemplate3.item.get(id_).getType();
-//                    itbag.level = ItemTemplate3.item.get(id_).getLevel();
-//                    itbag.icon = ItemTemplate3.item.get(id_).getIcon();
-//                    itbag.op = ItemTemplate3.item.get(id_).getOp();
-//                    itbag.color = ItemTemplate3.item.get(id_).getColor();
-//                    itbag.part = ItemTemplate3.item.get(id_).getPart();
-//                    itbag.tier = 0;
-//                    itbag.islock = false;
-//                    itbag.time_use = 0;
-//                    conn.p.item.add_item_bag3(itbag);
-//                    conn.p.item.char_inventory(3);
-//                    Service.send_notice_box(conn, "Nhận được " + itbag.name);
-//                    return;
-//                } else if (random > 20 && random < 30) {
-//                    short id_ = 4709;
-//                    Item3 itbag = new Item3();
-//                    itbag.id = id_;
-//                    itbag.name = ItemTemplate3.item.get(id_).getName();
-//                    itbag.clazz = ItemTemplate3.item.get(id_).getClazz();
-//                    itbag.type = ItemTemplate3.item.get(id_).getType();
-//                    itbag.level = ItemTemplate3.item.get(id_).getLevel();
-//                    itbag.icon = ItemTemplate3.item.get(id_).getIcon();
-//                    itbag.op = ItemTemplate3.item.get(id_).getOp();
-//                    itbag.color = ItemTemplate3.item.get(id_).getColor();
-//                    itbag.part = ItemTemplate3.item.get(id_).getPart();
-//                    itbag.tier = 0;
-//                    itbag.islock = false;
-//                    itbag.time_use = 0;
-//                    conn.p.item.add_item_bag3(itbag);
-//                    conn.p.item.char_inventory(3);
-//                    Service.send_notice_box(conn, "Nhận được " + itbag.name);
-//                    return;
-//                } else if (random > 30) {
-//                    int vang = Util.random(5000, 100000);
-//                    int ngoc = Util.random(200, 400);
-//                    conn.p.update_vang(vang);
-//                    conn.p.update_ngoc(ngoc);
-//                    conn.p.item.char_inventory(5);
-//                    Service.send_notice_box(conn, "Nhận được " + vang + "Vàng. " + ngoc + "Ngọc");
-//                }
-//                break;
-//            }
-//            case 2: {
-//                send_menu_select(conn, 120, ev_he.Event_Ruong.get_top());
-////                Service.send_notice_box(conn, "Chức năng này đang fix lỗi");
-////                  if (conn.status != 0) {
-////                    Service.send_notice_box(conn, "Tài khoản chưa được kích hoạt,");
-////                    return;
-////                }
-////                   if (conn.p.get_ngoc() < 1000) {
-////                                Service.send_notice_box(conn, "Không đủ 1000 ngọc");
-////                                return;
-////                    }
-////                    conn.p.update_ngoc(-100);
-////
-////                Vgo vgo = null;
-////                vgo = new Vgo();
-////                vgo.id_map_go = 103;
-////                vgo.x_new = 282;
-////                vgo.y_new = 186;
-////                conn.p.change_map(conn.p, vgo);
-//
-//                break;
-//
-                case 3: {
+                case 2: {
                     if (conn.status != 0) {
                         Service.send_notice_box(conn, "Tài khoản chưa được kích hoạt,");
                         return;
@@ -3888,134 +3825,12 @@ public class MenuController {
                     send_menu_select(conn, -49, new String[]{"Khu Boss Even 0x", "Khu Boss Even 1x", "Khu Boss Even 2x", "Khu Boss Even 7x", "Khu Boss Even 8x", "Khu Boss Even 11x", "Khu Boss Even 13x"}, (byte) 3);
                     break;
                 }
-//                case 4: {
-//                    if (conn.p.quatanthu > 1 && conn.ac_admin < 111){
-//                        Service.send_notice_box(conn,"Bạn đã nhận quà tân thủ rồi");
-//                        return;
-//                    }
-//                    if (conn.p.quatanthu == 0) {
-//                        String text = "quatanthu";
-//                        try (Connection connection = SQL.gI().getConnection(); Statement st = connection.createStatement(); Statement ps = connection.createStatement(); ResultSet rs = st.executeQuery("SELECT * FROM `giftcode2` WHERE `name_player` = '" + text + "';")) {
-//                            byte empty_box = (byte) 0;
-//                            if (!rs.next()) {
-//                                Service.send_notice_box(conn, "Không Thấy Quà");
-//                                return;
-//                            }
-//                            String mess = rs.getString("logger");
-//                            empty_box = rs.getByte("empty_box");
-//                            byte date = rs.getByte("date");
-//                            if (conn.p.item.get_bag_able() >= empty_box) {
-//                                JSONArray jsar = (JSONArray) JSONValue.parse(rs.getString("item3"));
-//                                for (int i = 0; i < jsar.size(); i++) {
-//                                    JSONArray jsar2 = (JSONArray) JSONValue.parse(jsar.get(i).toString());
-//                                    if (jsar2 == null || jsar2.size() < 1) {
-//                                        continue;
-//                                    }
-//                                    Item3 itbag = new Item3();
-//                                    short it = Short.parseShort(jsar2.get(0).toString());
-//                                    itbag.id = it;
-//                                    itbag.name = ItemTemplate3.item.get(it).getName();
-//                                    itbag.clazz = ItemTemplate3.item.get(it).getClazz();
-//                                    itbag.type = ItemTemplate3.item.get(it).getType();
-//                                    itbag.level = ItemTemplate3.item.get(it).getLevel();
-//                                    itbag.icon = ItemTemplate3.item.get(it).getIcon();
-//                                    itbag.op = new ArrayList<>();
-//                                    itbag.op.addAll(ItemTemplate3.item.get(it).getOp());
-//                                    itbag.color = ItemTemplate3.item.get(it).getColor();
-//                                    itbag.part = ItemTemplate3.item.get(it).getPart();
-//                                    itbag.tier = 0;
-//                                    itbag.time_use = 0;
-//                                    itbag.islock = false;
-//                                    if (date > 0) {
-//                                        itbag.expiry_date = System.currentTimeMillis() + 1000L * 60 * 60 * 24 * date;
-//                                    }
-//                                    conn.p.item.add_item_bag3(itbag);
-//                                }
-//                                jsar.clear();
-//                                //
-//                                jsar = (JSONArray) JSONValue.parse(rs.getString("item4"));
-//                                for (int i = 0; i < jsar.size(); i++) {
-//                                    JSONArray jsar2 = (JSONArray) JSONValue.parse(jsar.get(i).toString());
-//                                    Item47 itbag = new Item47();
-//                                    itbag.id = Short.parseShort(jsar2.get(0).toString());
-//                                    itbag.quantity = Short.parseShort(jsar2.get(1).toString());
-//                                    itbag.category = 4;
-//                                    conn.p.item.add_item_bag47(4, itbag);
-//                                }
-//                                jsar.clear();
-//                                //
-//                                jsar = (JSONArray) JSONValue.parse(rs.getString("item7"));
-//                                for (int i = 0; i < jsar.size(); i++) {
-//                                    JSONArray jsar2 = (JSONArray) JSONValue.parse(jsar.get(i).toString());
-//                                    Item47 itbag = new Item47();
-//                                    itbag.id = Short.parseShort(jsar2.get(0).toString());
-//                                    itbag.quantity = Short.parseShort(jsar2.get(1).toString());
-//                                    itbag.category = 7;
-//                                    conn.p.item.add_item_bag47(7, itbag);
-//                                }
-//                                jsar.clear();
-//                                conn.p.update_vang(rs.getLong("vang"));
-//                                conn.p.update_ngoc(rs.getLong("ngoc"));
-//                                conn.p.update_coin(rs.getInt("coin"));
-//                                conn.p.quatanthu += 2;
-//                                LeaveItemMap.randomMD(conn);
-//                                conn.p.item.char_inventory(5);
-//                                conn.p.item.char_inventory(3);
-//                                conn.p.item.char_inventory(4);
-//                                conn.p.item.char_inventory(7);
-//                                Service.send_notice_box(conn, mess);
-//                            } else {
-//                                Service.send_notice_box(conn, "Hành trang phải trống " + empty_box + " ô trở lên!");
-//                            }
-//                        } catch (SQLException e) {
-//                            e.printStackTrace();
-//                        }
-//                    } else if (conn.p.quatanthu == 1 || conn.ac_admin > 111){
-//                        LeaveItemMap.randomMD(conn);
-//                        conn.p.quatanthu += 2;
-//                    }
-//                    break;
-//                }
-//                case 5: {
-//                    if (conn.p.settimeoff != 1) {
-//                        conn.p.settimeoff = 1;
-//                        Service.send_notice_box(conn, "ĐK thành công");
-//                    }else {
-//                        Service.send_notice_box(conn,"Bạn đã đk rồi");
-//                    }
-//                    break;
-//                }
-//                case 6: {
-//                    conn.p.addExp(conn.p.expGained);
-//                    Service.send_notice_box(conn,"Bạn nhận được " + conn.p.expGained + " EXP sau khi offline!");
-//                    break;
-//                }
-                case 4: {
+                case 3: {
                     send_menu_select(conn, -49,
                             new String[]{"Hướng dẫn", "Nhận nhiệm vụ", "Hủy nhiệm vụ", "Trả nhiệm vụ", "Kiểm tra"}, (byte) 1);
                     break;
                 }
-//            case 7:{
-//                Service.send_notice_box(conn, "Bạn phải là V.I.P_1,");
-//                break;
-//            }
-//            case 8:{
-//                 Service.send_notice_box(conn, "Bạn phải là V.I.P_2");
-//                break;
-//            }
-//            case 9:{
-//                 Service.send_notice_box(conn, "Bạn phải là V.I.P_3");
-//                break;
-//            }
-//             case 7:{
-//                send_menu_select(conn, 1001,
-//                        new String[]{"Hướng dẫn", "Nhận nhiệm vụ", "Hủy nhiệm vụ", "Trả nhiệm vụ", "Kiểm tra"});
-//                break;
-//             }
-//            case 7:{
-//                Service.send_box_UI(conn, 48); // shop Tinh tú
-//                break;
-//            }
+//
             }
         } else if (idmenu == 1) {
             switch (index) {
@@ -4032,7 +3847,7 @@ public class MenuController {
                         Service.send_notice_box(conn, "Đã nhận nhiệm vụ rồi!");
                     } else {
                         if (conn.p.quest_daily[4] > 0) {
-                            send_menu_select(conn, -49, new String[]{"Cực Dễ", "Bình thường", "Khó", "Siêu Khó"}, (byte) 2);
+                            DailyQuest.get_quest(conn.p, (byte) 3);
                         } else {
                             Service.send_notice_box(conn, "Hôm nay đã hết lượt, quay lại vào ngày mai");
                         }
@@ -4306,12 +4121,11 @@ public class MenuController {
                     return;
                 }
                 if (conn.p.point_active[0] < 1) {
-                    if (conn.p.checkcoin() < 5000){
-                        Service.send_notice_box(conn,"Không đủ coin");
-                        return;
-                    }
-                    Service.send_box_input_yesno(conn, -117, "Bạn có chắc chắn muốn vào phó bản với giá 5000 coin");
-                    //Service.send_notice_box(conn, "Đã hết lượt đi, hãy quay lại vào ngày mai");
+                    Service.send_notice_box(conn, "Đã hết lượt đi, hãy quay lại vào ngày mai");
+                    return;
+                }
+                if (conn.p.isLiveSquire){
+                    Service.send_notice_box(conn, "Không thể mang đệ tử vào phó bản");
                     return;
                 }
                 String notice = "Danh sách người chơi vào phó bản :\n1) " + conn.p.name + " : level " + conn.p.level;
@@ -4447,10 +4261,18 @@ public class MenuController {
                 break;
             }
             case 1: {
+                if (!conn.p.isOwner){
+                    Service.send_notice_box(conn,"Đệ không thể tương tác!!!");
+                    return;
+                }
                 Service.send_box_UI(conn, 22);
                 break;
             }
             case 2: {
+                if (!conn.p.isOwner){
+                    Service.send_notice_box(conn,"Đệ không thể tương tác!!!!");
+                    return;
+                }
                 Service.send_box_UI(conn, 23);
                 break;
             }
@@ -4687,7 +4509,18 @@ public class MenuController {
                 break;
             }
             case 1: {
-                Service.send_box_input_text(conn, 3, "Vòng xoay vàng", new String[]{"Tham gia (tối thiểu 1m) :"});
+                if (conn.p.banclone == 1){
+                    if (conn.p.check_HD() < 48){
+                        Service.send_notice_box(conn,"Không đủ 48 điểm HĐ để mở khóa");
+                        return;
+                    }
+                    conn.p.banclone = 0;
+                    conn.p.update_HD(-48);
+                    conn.p.item.char_inventory(5);
+                    Service.send_box_input_text(conn, 3, "Vòng xoay vàng", new String[]{"Tham gia (tối thiểu 1m) :"});
+                }else {
+                    Service.send_box_input_text(conn, 3, "Vòng xoay vàng", new String[]{"Tham gia (tối thiểu 1m) :"});
+                }
                 break;
             }
             default: {
@@ -4714,7 +4547,18 @@ public class MenuController {
                 break;
             }
             case 1: {
-                Service.send_box_input_text(conn, 17, "Vòng xoay ngọc", new String[]{"Tham gia (tối thiểu 500) :"});
+                if (conn.p.banclone == 1) {
+                    if (conn.p.check_HD() < 48) {
+                        Service.send_notice_box(conn, "Không đủ 48 điểm HĐ để đổi");
+                        return;
+                    }
+                    conn.p.banclone = 0;
+                    conn.p.update_HD(-48);
+                    conn.p.item.char_inventory(5);
+                    Service.send_box_input_text(conn, 17, "Vòng xoay ngọc", new String[]{"Tham gia (tối thiểu 500) :"});
+                }else {
+                    Service.send_box_input_text(conn, 17, "Vòng xoay ngọc", new String[]{"Tham gia (tối thiểu 500) :"});
+                }
                 break;
             }
             default: {
@@ -4913,7 +4757,7 @@ public class MenuController {
                 break;
             }
             case 5: {
-                BXH.send1(conn, 1);
+                //BXH.send1(conn, 1);
                 break;
             }
             case 6: {
@@ -4935,6 +4779,10 @@ public class MenuController {
             }
             case 8: {
                 BXH.send3(conn, 3);
+                break;
+            }
+            case 9: {
+                BXH.send2(conn, 2);
                 break;
             }
             default: {
@@ -5234,49 +5082,8 @@ public class MenuController {
             return;
         }
         switch (index) {
-            case 0: {
-                conn.p.id_item_rebuild = -1;
-                conn.p.is_use_mayman = false;
-                conn.p.id_use_mayman = -1;
-                Service.send_box_UI(conn, 18);
-                break;
-            }
+            case 0:
             case 1: {
-                Service.send_box_UI(conn, 17);
-                break;
-            }
-            case 2: {
-                conn.p.item_replace = -1;
-                conn.p.item_replace2 = -1;
-                Service.send_box_UI(conn, 19);
-                break;
-            }
-            case 3: {
-                Service.send_box_UI(conn, 24);
-                break;
-            }
-            case 4: {
-                Service.send_box_UI(conn, 25);
-                conn.p.id_medal_is_created = 0;
-                break;
-            }
-            case 5: {
-                Service.send_box_UI(conn, 26);
-                conn.p.id_medal_is_created = 1;
-                break;
-            }
-            case 6: {
-                Service.send_box_UI(conn, 27);
-                conn.p.id_medal_is_created = 2;
-                break;
-            }
-            case 7: {
-                Service.send_box_UI(conn, 28);
-                conn.p.id_medal_is_created = 3;
-                break;
-            }
-            case 8:
-            case 9: {
                 ArrayList<String> myList = new ArrayList<String>();
                 //Item3[] item3 = conn.p.item.bag3;
                 Item3[] itemw = conn.p.item.wear;
@@ -5292,26 +5099,26 @@ public class MenuController {
                     Service.send_notice_box(conn, "Không có vật phẩm phù hợp!");
                     return;
                 }
-
-                send_menu_select(conn, index == 9 ? 4 : 5, myList.toArray(new String[0]));
+                send_menu_select(conn, index + 9 == 9 ? 4 : 5, myList.toArray(new String[0]));
 
                 //Service.send_notice_box(conn, "Chưa có chức năng"); doi dong st
                 break;
             }
-//            case 10: {
-//                Service.send_notice_box(conn, "Chưa có chức năng"); doi pt st
-//                break;
-//            }
-            case 10: {
+            case 2: {
                 Service.send_box_UI(conn, 34);
                 break;
             }
-            case 11: {
+            case 3: {
                 Service.send_box_UI(conn, 35);
                 break;
             }
-            case 12: {
+            case 4: {
                 Service.send_box_UI(conn, 36);
+                break;
+            }
+            case 5: {
+                conn.p.id_medal_is_created = 2;
+                Service.send_box_UI(conn, 28);
                 break;
             }
             default: {
@@ -5742,141 +5549,6 @@ public class MenuController {
                 break;
             }
             case 3: {
-                if (!conn.p.isOwner){
-                    return;
-                }
-                short id_3, id_0, id_4, id_e, id_n, id_d, id_1, id_5;
-                id_3 = 464;
-                id_0 = 465;
-                id_4 = 466;
-                id_e = 467;
-                id_n = 468;
-                id_1 = 469;
-                id_5 = 470;
-                if (conn.p.item.total_item_by_id(7, id_3) <= 0
-                        || conn.p.item.total_item_by_id(7, id_0) <= 0
-                        || conn.p.item.total_item_by_id(7, id_4) <= 0
-                        || conn.p.item.total_item_by_id(7, id_e) <= 0
-                        || conn.p.item.total_item_by_id(7, id_n) <= 0
-                        || conn.p.item.total_item_by_id(7, id_1) <= 0
-                        || conn.p.item.total_item_by_id(7, id_5) <= 0) {
-                    Service.send_notice_box(conn, "Đi tập hợp đủ 7 viên ngọc rồng đi");
-                    return;
-                }
-                if (conn.p.get_vang() < 10_000_000) {
-                    Service.send_notice_box(conn, "Không đủ 10m vàng");
-                    return;
-                }
-                List<box_item_template> ids = new ArrayList<>();
-                List<Integer> it7 = new ArrayList<>(Arrays.asList(356, 361, 366, 371, 376, 381));
-                List<Integer> it7_vip = new ArrayList<>(Arrays.asList(471, 45, 351));
-                conn.p.update_vang(-10_000_000);
-                conn.p.item.remove(7, id_3, 1);
-                conn.p.item.remove(7, id_0, 1);
-                conn.p.item.remove(7, id_4, 1);
-                conn.p.item.remove(7, id_e, 1);
-                conn.p.item.remove(7, id_n, 1);
-                conn.p.item.remove(7, id_1, 1);
-                conn.p.item.remove(7, id_5, 1);
-                for (int i = 0; i < 2; i++) {
-                    int ran = Util.random(1, 100);
-                    if (ran < 10) {
-                        short id = Util.random(it7, new ArrayList<>()).shortValue();
-                        short quant = 1;
-                        ids.add(new box_item_template(id, quant, (byte) 7));
-                        conn.p.item.add_item_bag47(id, quant, (byte) 7);
-                    } else if (ran < 30) {
-                        short id = Util.random(it7_vip, new ArrayList<>()).shortValue();
-                        short quant = 5;
-                        ids.add(new box_item_template(id, quant, (byte) 7));
-                        conn.p.item.add_item_bag47(id, quant, (byte) 7);
-                    } else if (ran < 50) {
-                        short id = 318;
-                        short quant = 5;
-                        ids.add(new box_item_template(id, quant, (byte) 4));
-                        conn.p.item.add_item_bag47(id, quant, (byte) 4);
-                    } else if (ran > 99.9) {
-                        short[] allowedIds = {4761};
-                        short iditem = allowedIds[Util.random(0, allowedIds.length - 1)];
-                        Item3 itbag = new Item3();
-                        itbag.id = iditem;
-                        itbag.name = ItemTemplate3.item.get(iditem).getName();
-                        itbag.clazz = ItemTemplate3.item.get(iditem).getClazz();
-                        itbag.type = ItemTemplate3.item.get(iditem).getType();
-                        itbag.level = ItemTemplate3.item.get(iditem).getLevel();
-                        itbag.icon = ItemTemplate3.item.get(iditem).getIcon();
-                        itbag.op = new ArrayList<>();
-                        itbag.op.addAll(ItemTemplate3.item.get(iditem).getOp());
-                        itbag.color = ItemTemplate3.item.get(iditem).getColor();
-                        itbag.part = ItemTemplate3.item.get(iditem).getPart();
-                        itbag.tier = 0;
-                        itbag.islock = false;
-                        itbag.time_use = 0;
-                        itbag.expiry_date = System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 15;
-                        conn.p.item.add_item_bag3(itbag);
-                        conn.p.item.char_inventory(5);
-                        ids.add(new box_item_template(iditem, (short) 1, (byte) 3));
-                    } else if (ran > 99.999) {
-                        short[] allowedIds = {4587, 4588, 4589, 4590};
-                        short iditem = allowedIds[Util.random(0, allowedIds.length - 1)];
-                        Item3 itbag = new Item3();
-                        itbag.id = iditem;
-                        itbag.name = ItemTemplate3.item.get(iditem).getName();
-                        itbag.clazz = ItemTemplate3.item.get(iditem).getClazz();
-                        itbag.type = ItemTemplate3.item.get(iditem).getType();
-                        itbag.level = ItemTemplate3.item.get(iditem).getLevel();
-                        itbag.icon = ItemTemplate3.item.get(iditem).getIcon();
-                        itbag.op = new ArrayList<>();
-                        itbag.op.addAll(ItemTemplate3.item.get(iditem).getOp());
-                        itbag.color = ItemTemplate3.item.get(iditem).getColor();
-                        itbag.part = ItemTemplate3.item.get(iditem).getPart();
-                        itbag.op = ItemTemplate3.item.get(iditem).getOp();
-                        itbag.tier = 0;
-                        itbag.islock = true;
-                        itbag.time_use = 0;
-                        conn.p.item.add_item_bag3(itbag);
-                        conn.p.item.char_inventory(5);
-                        ids.add(new box_item_template(iditem, (short) 1, (byte) 3));
-                    }
-                }
-                //conn.p.doiqua++;
-                conn.p.item.char_inventory(3);
-                conn.p.item.char_inventory(4);
-                conn.p.item.char_inventory(5);
-                conn.p.item.char_inventory(7);
-                Service.Show_open_box_notice_item(conn.p, "Bạn nhận được", ids);
-                break;
-            }
-//            case 3: {
-//                Service.send_box_input_text(conn, 5, "Đổi coin sang ngọc \n" + "Khuyến Mại X" + Manager.gI().giakmngoc, new String[]{"Tỷ lệ 1000 coin = " + 500 * Manager.gI().giakmngoc + " Ngọc"});
-//                break;
-//            }
-            case 4: {
-                if (!conn.p.isOwner){
-                    return;
-                }
-                //Service.send_notice_box(conn,"Chức năng đang tạm khóa" );
-               Service.send_box_input_text(conn, 14, "Đổi coin sang vàng \n" + "Khuyến Mại X" + Manager.gI().giakmgold, new String[]{"Tỷ lệ 1000 coin = " + 1000000 * Manager.gI().giakmgold + " Vàng"});
-                break;
-            }
-
-//            case 4: {
-//                Service.send_notice_box(conn, "Chức năng không còn tồn tại.");
-//                //Service.send_box_input_yesno(conn, 121, "1000 ngọc cho 2h, hãy xác nhận");
-//                break;
-//            }
-//            case 5: {
-//                EffTemplate ef = conn.p.get_eff(-126);
-//                if (ef != null && ef.time > System.currentTimeMillis()) {
-//                    Service.send_notice_box(conn,
-//                            "Thời gian còn lại : " + Util.getTime((int) (ef.time - System.currentTimeMillis()) / 1000));
-//                } else {
-//                    Service.send_notice_box(conn, "Chức năng không còn tồn tại.");
-//                    //Service.send_notice_box(conn, "Chưa đăng ký kiểm tra cái gì?");
-//                }
-//                break;
-//            }
-            case 5: {
                 if (conn.p.type_exp == 0) {
                     conn.p.type_exp = 1;
                     Service.send_notice_box(conn, "Đã bật nhận exp");
@@ -5886,11 +5558,11 @@ public class MenuController {
                 }
                 break;
             }
-            case 6: {
+            case 4: {
                 if (!conn.p.isOwner){
                     return;
                 }
-                Service.send_box_input_text(conn, 30, "Đổi mật khẩu", new String[]{"nhập mật khẩu cũ",
+                Service.send_box_input_text(conn, 39, "Đổi mật khẩu", new String[]{"nhập mật khẩu cũ",
                     "nhập mật khẩu mới", "nhập lại mật khẩu mới"});
                 break;
             }
@@ -5997,9 +5669,6 @@ public class MenuController {
                     Service.send_notice_box(conn, "Tài khoản chưa được kích hoạt, hãy kích hoạt");
                     return;
                 }
-                if (conn.p.get_ngoc() < 5_000) {
-                    Service.send_notice_box(conn, "Không đủ 5k ngọc");
-                }
                 if (!conn.p.isOwner){
                     Service.send_notice_box(conn,"Đệ tử không vào được kmb");
                     return;
@@ -6012,7 +5681,6 @@ public class MenuController {
                     conn.p.update_HD(-48);
                     conn.p.banclone = 0;
                 }
-                conn.p.update_ngoc(-5_000);
                 vgo = new Vgo();
                 vgo.id_map_go = 82;
                 vgo.x_new = 432;
@@ -6391,6 +6059,7 @@ public class MenuController {
                     if (!conn.p.isOwner){
                         return;
                     }
+                    //Service.send_notice_box(conn, "Chức năng đang được fix lỗi");
                     conn.p.isCreateItemStar = true;
                     Service.send_box_UI(conn, 33);
                     break;
@@ -7140,7 +6809,18 @@ public class MenuController {
             }
         }
     }
-
+    private static void Menu_CayLeu(Session conn, byte index) throws IOException {
+        switch (index){
+            case 0: {
+                EventManager.top_event(conn);
+                break;
+            }
+            case 1: {
+                EventManager.top_event1(conn);
+                break;
+            }
+        }
+    }
     private static void Menu_CayThong(Session conn, byte index) throws IOException {
         if (Manager.gI().event == 1) {
             switch (index) {
@@ -7294,51 +6974,55 @@ public class MenuController {
             Service.send_notice_box(conn, "Không có vật phẩm phù hợp!");
         }
     }
-
     private static void Menu_Wedding(Session conn, byte index) throws IOException {
         switch (index) {
             case 0: {
                 if (conn.p.item.wear[23] == null) {
                     Service.send_box_input_text(conn, 66, "Nhập thông tin",
-                            new String[]{"Nhập số 4 : ", "Tên đối phương : "});
+                            new String[]{"Nhập số 4","Tên đối phương : "});
                 } else {
                     Service.send_notice_box(conn, "Nhẫn cưới thì đeo đấy mà đòi cưới thêm ai??");
                 }
                 break;
             }
             case 1: {
-                if (conn.p.item.wear[23] != null) {
-                    Service.send_notice_box(conn, "Hãy trân trọng đi. Ngoài kia bao nhiêu người dell có ny kia kìa");
-                    return;
-//                    Wedding temp = Wedding.get_obj(conn.p.name);
-//                    if (temp != null) {
-//                        String name_target = "";
-//                        if (temp.name_1.equals(conn.p.name)) {
-//                            name_target = temp.name_2;
-//                        } else {
-//                            name_target = temp.name_1;
-//                        }
-//                        Service.send_box_input_yesno(conn, 111, "Xác định hủy hôn ước với " + name_target);
-//                    }
-                } else {
-                    Service.send_notice_box(conn, "Đã cưới ai đâu, ảo tưởng à??");
-                }
-                break;
-            }
-            case 2: {
                 Item3 it = conn.p.item.wear[23];
                 if (it != null) {
                     float perc = (((float) Wedding.get_obj(conn.p.name).exp) / Level.entrys.get(it.tier).exp) * 100f;
-                    String notice = "Exp hiện tại : %s, nâng cấp cần %str vàng và %sk ngọc";
+                    String notice = "Exp hiện tại : %s, nâng cấp cần %s vàng, %s ngọc và %s coin.";
                     String a = String.format("%.2f", perc) + "%";
+                    long vag;
+                    int ngoc;
+                    int coin;
+                    if (it.tier <= 20){
+                        vag = 100_000_000;
+                        ngoc = 10_000;
+                        coin = 10_000;
+                    } else if (it.tier > 20 && it.tier <= 40){
+                        vag = 500_000_000;
+                        ngoc = 50_000;
+                        coin = 50_000;
+                    } else if (it.tier > 40 && it.tier <= 60){
+                        vag = 1_000_000_000;
+                        ngoc = 100_000;
+                        coin = 100_000;
+                    } else if (it.tier > 60 && it.tier <= 80){
+                        vag = 2_000_000_000;
+                        ngoc = 200_000;
+                        coin = 200_000;
+                    } else {
+                        vag = 3_000_000_000l;
+                        ngoc = 300_000;
+                        coin = 300_000;
+                    }
                     Service.send_box_input_yesno(conn, 112,
-                            String.format(notice, a, (3 * (it.tier + 1)) * 5_000_000L, (3 * (it.tier + 1)) * 10_000));
+                            String.format(notice, a, vag, ngoc, coin));
                 } else {
                     Service.send_notice_box(conn, "Đã cưới ai éo đâu, ảo tưởng à??");
                 }
                 break;
             }
-            case 3: {
+            case 2: {
                 String notice = "- 100k coin \" nhẫn cưới 4\"\r\n" + "Nâng cấp nhẫn:\r\n"
                         + "Khi đã kết hôn vợ và chồng cùng chung 1 nhóm đi up quái hoặc giết boss thì nhẫn cưới sẽ đc + exp\r\n"
                         + "Đến npc Anna để tiến hành nâng cấp nhẫn, mỗi lần nâng cấp tốn 3k ngọc 3tr vàng.\r\n"
